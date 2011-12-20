@@ -94,7 +94,6 @@ public:
 
     Emitter* setLocation(const glm::vec3 &l);
     Emitter* setOutputRate(float r);
-    Emitter* setRadius(float r);
     // How much time is left before this emitter expires?
     Emitter* setTimeRemaining(float);
 
