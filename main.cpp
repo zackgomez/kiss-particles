@@ -51,6 +51,29 @@ GLfloat lightOneColor[] = {0.6, 0.3, 0.2, 1.0}; /* red-tinted */
 GLfloat skinColor[] = {0.1, 1.0, 0.1, 1.0}, eyeColor[] = {1.0, 0.2, 0.2, 1.0};
 /* *INDENT-ON* */
 
+void ptest(void) {
+
+    Emitter *e = ParticleManager::get()->newEmitter();
+    ParticleManager::get()->addEmitter(e);
+
+}
+
+void timerCallback (int value);
+#define usecs 10
+void setupParticleLoop() {
+    glutTimerFunc(usecs, timerCallback, 0);
+}
+
+void timerCallback (int value)
+{
+
+    ParticleManager::get()->render(1.0f * usecs);
+
+    /* call back again after elapsedUSecs have passed */
+    glutTimerFunc (usecs, timerCallback, value);
+}
+
+
 void
 extrudeSolidFromPolygon(GLfloat data[][2], unsigned int dataSize,
   GLdouble thickness, GLuint side, GLuint edge, GLuint whole)
@@ -186,7 +209,7 @@ redraw(void)
     recalcModelView();
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glCallList(DINOSAUR);
-  showMessage(2, 7.1, 4.1, "Spin me.");
+  showMessage(2, 7.1, 4.1, "I'm a derpasaur");
   glutSwapBuffers();
 }
 
@@ -310,6 +333,12 @@ main(int argc, char **argv)
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
   trackball(curquat, 0.0, 0.0, 0.0, 0.0);
+
+
+    setupParticleLoop();
+    ptest();
+
+
   glutCreateWindow("dinospin");
   glutDisplayFunc(redraw);
   glutReshapeFunc(myReshape);

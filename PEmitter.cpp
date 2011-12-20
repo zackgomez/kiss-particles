@@ -103,6 +103,7 @@ bool Emitter::isDone() const
 
 void Emitter::emit(std::list<Particle*>& particles, float dt) 
 {
+    std::cout << "Emitting." << std::endl;
     // first decrease time remaining _on the emitter_.
     timeRemaining_ -= dt;
 

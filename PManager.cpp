@@ -71,6 +71,7 @@ Emitter* ParticleManager::newEmitter()
 
 void ParticleManager::addEmitter(Emitter *em)
 {
+    std::cout << "Adding a new emitter" << std::endl;
     emitters_.push_back(em);
 }
 
