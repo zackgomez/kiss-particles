@@ -59,7 +59,7 @@ float lifetimeNormalF::operator () ()
 
 glm::vec3 velocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
 {
-    return normalRandom(mu_, 0) * (epos - ppos) / r_;
+    return normalRandom(mu_, 0) * glm::normalize(epos - ppos) / r_;
 }
 
 glm::vec3 locationF::operator() (const glm::vec3 &epos)

@@ -23,8 +23,8 @@ int W = 300, H = 300;
 void ptest(void)
 {
     Emitter *e = ParticleManager::get()->newEmitter();
-    e->setParticleLocationF(new locationF(1.f))
-     ->setParticleVelocityF(new velocityF(2.f, 10.f, 2.f));
+    e->setParticleLocationF(new locationF(5.f))
+     ->setParticleVelocityF(new velocityF(2.f, 20.f, 2.f));
     ParticleManager::get()->addEmitter(e);
 }
 
@@ -95,9 +95,9 @@ int main(int argc, char **argv)
     glMatrixMode(GL_PROJECTION);
     gluPerspective( /* field of view in degree */ 40.0,
             /* aspect ratio */ 1.0,
-            /* Z near */ 1.0, /* Z far */ 40.0);
+            /* Z near */ 1.0, /* Z far */ 200.0);
     glMatrixMode(GL_MODELVIEW);
-    gluLookAt(0.0, 0.0, 30.0,  /* eye is at (0,0,30) */
+    gluLookAt(0.0, 0.0, 80.0,  /* eye position */
             0.0, 0.0, 0.0,      /* center is at (0,0,0) */
             0.0, 1.0, 0.);      /* up is in positive Y direction */
 
