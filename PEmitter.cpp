@@ -79,6 +79,7 @@ glm::vec4 discreteColorF::operator() ()
 }
 
 Emitter::Emitter() :
+    outputGroup("default"),
     lifetime_func(new lifetimeF(0.3f)),
     velocity_func(new velocityF(2.f, 50.f, 10.f)),
     location_func(new locationF(10.f)),

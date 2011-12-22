@@ -1,8 +1,9 @@
-#pragma once
+	#pragma once
 #include "Particle.h"
 #include <list>
 #include <glm/glm.hpp>
 #include <vector>
+#include <string>
 
 float normalRandom(float mu, float sigma);
 
@@ -101,6 +102,8 @@ public:
     // The update function. Spew some new particles, given that dt seconds
     // have elapsed.
     void emit(std::list<Particle*>&, float dt);
+
+    std::string outputGroup;
 private:
     Emitter();
 

@@ -2,8 +2,11 @@
 
 #include <glm/glm.hpp>
 #include <list>
+#include <map>
+#include <string>
 #include "Particle.h"
 #include "PEmitter.h"
+#include "PGroup.h"
 
 // Utility functions
 
@@ -12,8 +15,6 @@ float normalRandom(float mu, float sigma);
 
 //
 // Particle system manager declaration.
-//
-// Singleton and Factory Pattern
 //
 class ParticleManager 
 {
@@ -35,8 +36,8 @@ private:
     ParticleManager();
     ~ParticleManager();
 
+    std::map<std::string, PGroup*> groups_;
     std::list<Emitter*> emitters_;
-    std::list<Particle*> particles_;
 
 };
 
