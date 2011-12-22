@@ -60,6 +60,19 @@ protected:
     float upfact_;
 };
 
+struct circleTangentVelocityF : public velocityF
+{
+    circleTangentVelocityF(float mu, float sigma, const glm::vec3 &upvec) :
+        mu_(mu), sigma_(sigma), upvec_(upvec)
+    { }
+
+    virtual glm::vec3 operator()(const glm::vec3 &epos, const glm::vec3 &ppos);
+
+protected:
+    const float mu_, sigma_;
+    const glm::vec3 upvec_;
+};
+
 struct locationF
 {
     locationF() : r_(0.f) { }
