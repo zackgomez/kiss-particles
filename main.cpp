@@ -36,6 +36,32 @@ void ptest(void)
      ->setParticleLocationF(new circleLocationF(1.0f, glm::vec3(1, 1, 1)))
      ->setParticleVelocityF(new velocityF(2.f, 20.f, 2.f));
     ParticleManager::get()->addEmitter(e);
+    e->setLocation(glm::vec3(1, 10, 0));
+    
+
+    // Add a red + blue one
+    std::vector<glm::vec4> c;
+#define _add(_r,_b,_g,_a) c.push_back(glm::vec4(_r,_g,_b,_a))
+    _add(1,0,0,0);
+    _add(1,0,0,0);
+    _add(1,0,0,0);
+    _add(1,0,0,0);
+    _add(1,0,0,0);
+    _add(1,0,0,0);
+    _add(0,1,0,0);
+#undef _add
+
+    PGroup *pg_gravity = ParticleManager::newGroup("gravity");
+    Emitter *e2 = ParticleManager::get()->newEmitter();
+    e2->setParticleLocationF(new locationF(2.f))
+        ->setParticleColorF(new discreteColorF(c))
+        ->setParticleVelocityF(new velocityF(2.f, 5.f, 2.f));
+    e2->outputGroup = "gravity"; 
+
+    pg_gravity->addAction(new GravityActionF(0));
+    
+    ParticleManager::get()->addEmitter(e2);
+
 }
 
 void timerCallback (int value);

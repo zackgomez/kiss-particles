@@ -23,4 +23,3 @@ struct Particle
     // Just create a matrix and render this shit to the screen.
     void render();
 };
-

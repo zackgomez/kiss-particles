@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
+#include "utils.h"
 
 
 // Approximate a normal variable.
@@ -65,7 +66,7 @@ float lifetimeNormalF::operator () ()
 
 glm::vec3 velocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
 {
-    return normalRandom(mu_, 0) * glm::normalize(epos - ppos) / r_;
+    return normalRandom(mu_, 0) * glm::normalize(epos - ppos) / vel_;
 }
 
 glm::vec3 locationF::operator() (const glm::vec3 &epos)
@@ -111,6 +112,7 @@ glm::vec4 discreteColorF::operator() ()
 }
 
 Emitter::Emitter() :
+    outputGroup("default"),
     lifetime_func(new lifetimeF(0.3f)),
     velocity_func(new velocityF(2.f, 50.f, 10.f)),
     location_func(new locationF(10.f)),
@@ -135,7 +137,6 @@ bool Emitter::isDone() const
 
 void Emitter::emit(std::list<Particle*>& particles, float dt) 
 {
-    std::cout << "Emitting." << std::endl;
     // first decrease time remaining _on the emitter_.
     timeRemaining_ -= dt;
 
@@ -162,7 +163,6 @@ void Emitter::emit(std::list<Particle*>& particles, float dt)
         p->color = glm::clamp(color_ * colordelta, 0.f, 1.f);
         p->color *= normalRandom(colorbright_, colorbrightvar_);
         */
-
         particles.push_back(p);
     }
 }

@@ -3,16 +3,26 @@
 #include "Particle.h"
 #include "PEmitter.h"
 #include <glm/gtc/matrix_transform.hpp>
-//#include "glutils.h"
 #include <cstdlib>
 
 ParticleManager::ParticleManager()
-{}
+{
+    // Make sure to set up the default particle group.
+    groups_["default"] = new PGroup();   
+}
 
 ParticleManager::~ParticleManager()
 {
     reset();
 }
+
+PGroup* ParticleManager::newGroup(const std::string &gname)
+{
+    PGroup *p = new PGroup();
+    get()->groups_[gname] = p;
+    return p;
+}
+    
 
 // A combined update/render call...
 // Two types of operations occur here:
@@ -22,39 +32,35 @@ void ParticleManager::render(float dt)
 {
     /*
     std::cout << "Rendering " << emitters_.size() << " emitters and "
-        << particles_.size() << " particles\n";
+        << groups_.size() << " groups\n";
         */
     // First create new particles.
     std::list<Emitter*>::iterator eit;
     for (eit = emitters_.begin(); eit != emitters_.end(); eit++)
-	{
-        (*eit)->emit(particles_, dt);
+    {
+        std::string og = (*eit)->outputGroup;
+        //DPRINT(groups_.find(og)->second);
+        // Freak the fuck out if we can't find the requested group.
+        if (!groups_.count(og)) 
+        {
+            std::cout << "unknown particle group requested: " << og << std::endl; 
+            assert(false);
+        }
+        (*eit)->emit(groups_.find(og)->second->particles_, dt);
         if ((*eit)->isDone()) 
         {
             delete *eit;
             eit = emitters_.erase(eit);
         }
     }
-
-    // Then update old particles.
-    std::list<Particle*>::iterator pit;
-    for (pit = particles_.begin(); pit != particles_.end(); pit++)
-    {    
-        (*pit)->update(dt);
-        // After updating, we have to delete any expired particles
-        // (The particle who just updated isn't really capable of
-        // cleaning up after itself.)
-        if ((*pit)->t < 0) 
-        {
-            delete *pit;
-            pit = particles_.erase(pit);
-        }
-    }
  
     // finally draw existing particles
-    for (pit = particles_.begin(); pit != particles_.end(); pit++)
+    std::map<std::string, PGroup*>::iterator pit;
+    for (pit = groups_.begin(); pit != groups_.end(); pit++) 
     {
-        (*pit)->render();
+        //std::cout << "attempting to render group:" << pit->second << std::endl;
+        pit->second->update(dt);
+        pit->second->render();
     }
 }
 
@@ -71,7 +77,7 @@ Emitter* ParticleManager::newEmitter()
 
 void ParticleManager::addEmitter(Emitter *em)
 {
-    std::cout << "Adding a new emitter" << std::endl;
+    std::cout << "Adding a new emitter: " << em << std::endl;
     emitters_.push_back(em);
 }
 
@@ -89,8 +95,5 @@ void ParticleManager::reset()
         delete *eit;
     emitters_.clear();
 
-    std::list<Particle*>::iterator pit;
-    for (pit = particles_.begin(); pit != particles_.end(); pit++)
-        delete *pit;
-    particles_.clear();
+    // Tell each particle group to reset.
 }

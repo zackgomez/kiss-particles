@@ -3,8 +3,7 @@
 #include <list>
 #include <glm/glm.hpp>
 #include <vector>
-
-float normalRandom(float mu, float sigma);
+#include <string>
 
 // Forward declaration necessary for friending
 class ParticleManager;
@@ -34,12 +33,12 @@ private:
 // Simpleton velocity function
 struct velocityF
 {
-    velocityF(float radius, float mu, float sigma) : mu_(mu), sigma_(sigma), r_(radius) { }
+    velocityF(float vel, float mu, float sigma) : mu_(mu), sigma_(sigma), vel_(vel) { }
     virtual glm::vec3 operator() (const glm::vec3 &epos, const glm::vec3 &ppos);
 
 protected:
     float mu_, sigma_;
-    float r_;
+    float vel_;
 };
 
 struct locationF
@@ -117,6 +116,8 @@ public:
     // The update function. Spew some new particles, given that dt seconds
     // have elapsed.
     void emit(std::list<Particle*>&, float dt);
+
+    std::string outputGroup;
 private:
     Emitter();
 
