@@ -1,11 +1,9 @@
-	#pragma once
+#pragma once
 #include "Particle.h"
 #include <list>
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
-
-float normalRandom(float mu, float sigma);
 
 // Forward declaration necessary for friending
 class ParticleManager;

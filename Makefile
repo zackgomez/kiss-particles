@@ -8,7 +8,7 @@ kiss_particles: main.o PEmitter.o PManager.o Particle.o
 	g++ $(CXXFLAGS) $(LDFLAGS) -o $@ $^
 
 test: 
-	g++ -g main.cpp -Wall -lGL -lglut -I glm-0.9.2.7/ -fpermissive -lGLU trackball.c PManager.cpp Particle.cpp PEmitter.cpp PGroup.cpp
+	g++ -g main.cpp -Wall -lGL -lglut -I glm-0.9.2.7/ -fpermissive -lGLU trackball.c PManager.cpp Particle.cpp PEmitter.cpp PGroup.cpp utils.cpp
 
 clean:
 	rm -f ptest *.o
