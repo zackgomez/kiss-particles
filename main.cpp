@@ -22,8 +22,18 @@ int W = 300, H = 300;
 
 void ptest(void)
 {
-    Emitter *e = ParticleManager::get()->newEmitter();
-    e->setParticleLocationF(new locationF(5.f))
+    Emitter *e;
+    // Left emitter
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(glm::vec3(-10.0, 0.0, 0.0))
+     ->setParticleLocationF(new locationF(3.f))
+     ->setParticleVelocityF(new velocityF(2.f, 20.f, 2.f));
+    ParticleManager::get()->addEmitter(e);
+
+    // Right emitter
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(glm::vec3(10.0, 0.0, 0.0))
+     ->setParticleLocationF(new circleLocationF(1.0f, glm::vec3(1, 1, 1)))
      ->setParticleVelocityF(new velocityF(2.f, 20.f, 2.f));
     ParticleManager::get()->addEmitter(e);
 }
@@ -81,7 +91,6 @@ int main(int argc, char **argv)
 
     setupParticleLoop();
     ptest();
-
 
     glutCreateWindow("kiss_particle demo");
     glutDisplayFunc(redraw);

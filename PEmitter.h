@@ -44,11 +44,27 @@ protected:
 
 struct locationF
 {
+    locationF() : r_(0.f) { }
     locationF(float radius) : r_(radius) { }
 
     virtual glm::vec3 operator()(const glm::vec3 &epos);
 protected:
     float r_;
+};
+
+// Creates particles on a circle, with radius and orientation
+struct circleLocationF : public locationF
+{
+    circleLocationF(float radius, const glm::vec3 &up) :
+        r_(radius), upvec_(glm::normalize(up))
+    { }
+
+    virtual glm::vec3 operator()(const glm::vec3 &epos);
+
+protected:
+    // Repeated because eventually locationF will be just an interface
+    float r_;
+    glm::vec3 upvec_;
 };
 
 struct colorF

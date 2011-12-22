@@ -2,6 +2,7 @@
 #include "PEmitter.h"
 #include <cstdio>
 #include <iostream>
+#include <glm/gtc/matrix_transform.hpp>
 
 
 // Approximate a normal variable.
@@ -16,6 +17,11 @@ float normalRandom(float mu, float sigma)
         ans += static_cast<float>(rand()) / RAND_MAX;
     }
     return mu + (ans - 3) * sigma;
+}
+
+float random_float(float min = 0, float max = 1)
+{
+    return static_cast<float>(rand()) / RAND_MAX * (max - min) + min;
 }
 
 void test_random() {
@@ -65,6 +71,32 @@ glm::vec3 velocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
 glm::vec3 locationF::operator() (const glm::vec3 &epos)
 {
     return pointOnSphere(r_, epos);
+}
+
+glm::vec3 circleLocationF::operator() (const glm::vec3 &epos)
+{
+    // Use info at http://www.math4all.in/public_html/linear%20algebra/chapter8.2.html
+    // to construct orthonormal basis from up vector.  Then given these extra
+    // two orthogonal vectors rotate one of them a random angle around the up vector
+    // and that will give the direction, multiply by the radius and add to center
+    
+    // In homogenous coords
+    glm::vec4 orthvec = glm::vec4(upvec_.y,
+            -1 + upvec_.y * upvec_.y * 1 / (1 + upvec_.x),
+            0  + upvec_.y * upvec_.z * 1 / (1 + upvec_.x),
+            1);
+
+    float angle_deg = random_float(0, 360);
+
+    glm::mat4 rotmat = glm::rotate(glm::mat4(1.f), angle_deg,
+            upvec_);
+
+    glm::vec3 dir = glm::vec3(rotmat * orthvec);
+
+    std::cout << "orthvec [" << orthvec.x << ' ' << orthvec.y << ' ' << orthvec.z << "]\n";
+    std::cout << "dir     [" << dir.x << ' ' << dir.y << ' ' << dir.z << "]\n";
+
+    return epos + dir * r_;
 }
 
 glm::vec4 colorF::operator() ()
