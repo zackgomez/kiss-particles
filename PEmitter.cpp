@@ -69,6 +69,17 @@ glm::vec3 velocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
     return normalRandom(mu_, 0) * glm::normalize(epos - ppos) / vel_;
 }
 
+glm::vec3 coneVelocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
+{
+    glm::vec3 circledir = glm::normalize(epos - ppos);
+    // Point in upvec direction according to upfact
+    circledir = glm::normalize((1 - upfact_) * circledir + upfact_ * upvec_);
+
+    float velmag = normalRandom(mu_, sigma_);
+
+    return circledir * velmag;
+}
+
 glm::vec3 locationF::operator() (const glm::vec3 &epos)
 {
     return pointOnSphere(r_, epos);

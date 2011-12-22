@@ -33,12 +33,31 @@ private:
 // Simpleton velocity function
 struct velocityF
 {
+    velocityF() : mu_(0), sigma_(0), vel_(0) { }
     velocityF(float vel, float mu, float sigma) : mu_(mu), sigma_(sigma), vel_(vel) { }
     virtual glm::vec3 operator() (const glm::vec3 &epos, const glm::vec3 &ppos);
 
 protected:
     float mu_, sigma_;
     float vel_;
+};
+
+// Assumes that locations are on a circle around epos. Givens them a velocity
+// pointing "up" and away from the center
+struct coneVelocityF : public velocityF
+{
+    // upfact is in [0, 1] and determines amount of "up velocity"
+    coneVelocityF(float mu, float sigma, const glm::vec3 &up, float upfact) :
+        mu_(mu), sigma_(sigma), upvec_(glm::normalize(up)), upfact_(upfact)
+    { }
+
+    virtual glm::vec3 operator()(const glm::vec3 &epos, const glm::vec3 &ppos);
+
+protected:
+    // hiding velocityF members because it should be just an interface
+    float mu_, sigma_;
+    glm::vec3 upvec_;
+    float upfact_;
 };
 
 struct locationF

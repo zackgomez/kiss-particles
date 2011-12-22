@@ -34,10 +34,11 @@ void ptest(void)
     ParticleManager::get()->addEmitter(e);
 
     // Right emitter
+    glm::vec3 up(0, 1, 0);
     e = ParticleManager::get()->newEmitter();
     e->setLocation(glm::vec3(10.0, 0.0, 0.0))
-     ->setParticleLocationF(new circleLocationF(3.0f, glm::vec3(0, 1, 0)))
-     ->setParticleVelocityF(new velocityF(2.f, 20.f, 2.f));
+     ->setParticleLocationF(new circleLocationF(3.0f, up))
+     ->setParticleVelocityF(new coneVelocityF(4.f, 1.f, up, 0.5));
     ParticleManager::get()->addEmitter(e);
     
 
@@ -53,6 +54,7 @@ void ptest(void)
     _add(0,1,0,0);
 #undef _add
 
+    // Center emitter
     PGroup *pg_gravity = ParticleManager::newGroup("gravity");
     Emitter *e2 = ParticleManager::get()->newEmitter();
     e2->setParticleLocationF(new locationF(2.f))
