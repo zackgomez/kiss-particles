@@ -33,12 +33,12 @@ private:
 // Simpleton velocity function
 struct velocityF
 {
-    velocityF(float radius, float mu, float sigma) : mu_(mu), sigma_(sigma), r_(radius) { }
+    velocityF(float vel, float mu, float sigma) : mu_(mu), sigma_(sigma), vel_(vel) { }
     virtual glm::vec3 operator() (const glm::vec3 &epos, const glm::vec3 &ppos);
 
 protected:
     float mu_, sigma_;
-    float r_;
+    float vel_;
 };
 
 struct locationF

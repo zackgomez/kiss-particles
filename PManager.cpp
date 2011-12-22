@@ -5,8 +5,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstdlib>
 
-#define DPRINT(_x) std::cout << "\"" #_x "\" = " << _x << std::endl 
-
 ParticleManager::ParticleManager()
 {
     // Make sure to set up the default particle group.
@@ -18,21 +16,32 @@ ParticleManager::~ParticleManager()
     reset();
 }
 
+ParticleManager::newGroup(const std::string &gname)
+{
+    
+
 // A combined update/render call...
 // Two types of operations occur here:
 //  - those that update emitters and particles
 //  - those that render particles
 void ParticleManager::render(float dt)
 {
+    /*
     std::cout << "Rendering " << emitters_.size() << " emitters and "
         << groups_.size() << " groups\n";
+        */
     // First create new particles.
     std::list<Emitter*>::iterator eit;
     for (eit = emitters_.begin(); eit != emitters_.end(); eit++)
     {
         std::string og = (*eit)->outputGroup;
-        DPRINT(og);
-        DPRINT(groups_.find(og)->second);
+        //DPRINT(groups_.find(og)->second);
+        // Freak the fuck out if we can't find the requested group.
+        if (!groups_.count(og)) 
+        {
+            std::cout << "unknown particle group requested: " << og << std::endl; 
+            assert(false);
+        }
         (*eit)->emit(groups_.find(og)->second->particles_, dt);
         if ((*eit)->isDone()) 
         {
@@ -43,9 +52,9 @@ void ParticleManager::render(float dt)
  
     // finally draw existing particles
     std::map<std::string, PGroup*>::iterator pit;
-    for (pit = groups_.begin(); pit != groups_.end(); pit++) {
-        
-        std::cout << "attempting to render group:" << pit->second << std::endl;
+    for (pit = groups_.begin(); pit != groups_.end(); pit++) 
+    {
+        //std::cout << "attempting to render group:" << pit->second << std::endl;
         pit->second->update(dt);
         pit->second->render();
     }

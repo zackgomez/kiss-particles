@@ -11,7 +11,7 @@ void PGroup::render(void)
     {
         //std::cout << "rendering particle: " << *pit << std::endl;
         (*pit)->render();
-        dprint((*pit)->t);
+        //dprint((*pit)->t);
         if ((*pit)->t < 0) {
             //std::cout << "deleting particle: " << *pit << std::endl;
             delete *pit;

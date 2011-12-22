@@ -8,10 +8,7 @@
 #include "PEmitter.h"
 #include "PGroup.h"
 
-// Utility functions
 
-glm::vec3 pointOnSphere(float r, glm::vec3 pos);  
-float normalRandom(float mu, float sigma);
 
 //
 // Particle system manager declaration.
@@ -31,6 +28,8 @@ public:
 
     // Removes all emitters and particles
     void reset();
+
+    static PGroup* newGroup(const std::string &groupName);
 
 private:
     ParticleManager();

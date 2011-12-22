@@ -45,7 +45,7 @@ void ptest(void)
     e2->setParticleLocationF(new locationF(2.f))
             ->setParticleColorF(new discreteColorF(c))
         ->setParticleVelocityF(new velocityF(2.f, 5.f, 2.f));
-
+    e2->outputGroup = "asdf";
     ParticleManager::get()->addEmitter(e2);
 
 }

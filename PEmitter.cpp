@@ -15,7 +15,7 @@ float lifetimeNormalF::operator () ()
 
 glm::vec3 velocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
 {
-    return normalRandom(mu_, 0) * glm::normalize(epos - ppos) / r_;
+    return normalRandom(mu_, 0) * glm::normalize(epos - ppos) / vel_;
 }
 
 glm::vec3 locationF::operator() (const glm::vec3 &epos)
@@ -60,7 +60,6 @@ bool Emitter::isDone() const
 
 void Emitter::emit(std::list<Particle*>& particles, float dt) 
 {
-    std::cout << "Emitting." << std::endl;
     // first decrease time remaining _on the emitter_.
     timeRemaining_ -= dt;
 
@@ -87,8 +86,6 @@ void Emitter::emit(std::list<Particle*>& particles, float dt)
         p->color = glm::clamp(color_ * colordelta, 0.f, 1.f);
         p->color *= normalRandom(colorbright_, colorbrightvar_);
         */
-#define DPRINT(_x) std::cout << "\"" #_x "\" = " << _x << std::endl 
-	DPRINT(p);
         particles.push_back(p);
     }
 }
