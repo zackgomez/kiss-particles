@@ -131,7 +131,8 @@ void Emitter::emit(std::list<Particle*>& particles, float dt)
         p->color = glm::clamp(color_ * colordelta, 0.f, 1.f);
         p->color *= normalRandom(colorbright_, colorbrightvar_);
         */
-
+#define DPRINT(_x) std::cout << "\"" #_x "\" = " << _x << std::endl 
+	DPRINT(p);
         particles.push_back(p);
     }
 }

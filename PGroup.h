@@ -6,6 +6,8 @@ class PGroup
 {
     void render();
     void reset();
+    void update(float);
+    
 private:
     std::list<Particle*> particles_;
 
