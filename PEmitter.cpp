@@ -92,10 +92,9 @@ glm::vec3 circleLocationF::operator() (const glm::vec3 &epos)
     glm::mat4 rotmat = glm::rotate(glm::mat4(1.f), angle_deg,
             upvec_);
 
-    glm::vec3 dir = glm::vec3(rotmat * orthvec);
-
-    std::cout << "orthvec [" << orthvec.x << ' ' << orthvec.y << ' ' << orthvec.z << "]\n";
-    std::cout << "dir     [" << dir.x << ' ' << dir.y << ' ' << dir.z << "]\n";
+    glm::vec4 homodir = rotmat * orthvec;
+    homodir /= homodir.w;
+    glm::vec3 dir(homodir);
 
     return epos + dir * r_;
 }

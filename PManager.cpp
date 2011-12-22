@@ -43,9 +43,10 @@ void ParticleManager::render(float dt)
         // Freak the fuck out if we can't find the requested group.
         if (!groups_.count(og)) 
         {
-            std::cout << "unknown particle group requested: " << og << std::endl; 
+            std::cout << "FATAL ERROR: unknown particle group requested: " << og << std::endl; 
             assert(false);
         }
+        // Emit into the output particle group
         (*eit)->emit(groups_.find(og)->second->particles_, dt);
         if ((*eit)->isDone()) 
         {

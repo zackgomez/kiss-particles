@@ -13,12 +13,15 @@
 #include <string.h>
 #include <math.h>       /* for cos(), sin(), and sqrt() */
 #include <GL/glut.h>
-#include "trackball.h"
 #include "PManager.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "uistate.h"
 
-int W = 300, H = 300;
+int windowWidth = 800, windowHeight = 600;
+
+// Peter's mystical ui controller for arcball transformation and stuff
+static UIState *ui;
 
 void ptest(void)
 {
@@ -33,10 +36,9 @@ void ptest(void)
     // Right emitter
     e = ParticleManager::get()->newEmitter();
     e->setLocation(glm::vec3(10.0, 0.0, 0.0))
-     ->setParticleLocationF(new circleLocationF(1.0f, glm::vec3(1, 1, 1)))
+     ->setParticleLocationF(new circleLocationF(3.0f, glm::vec3(0, 1, 0)))
      ->setParticleVelocityF(new velocityF(2.f, 20.f, 2.f));
     ParticleManager::get()->addEmitter(e);
-    e->setLocation(glm::vec3(1, 10, 0));
     
 
     // Add a red + blue one
@@ -58,7 +60,7 @@ void ptest(void)
         ->setParticleVelocityF(new velocityF(2.f, 5.f, 2.f));
     e2->outputGroup = "gravity"; 
 
-    pg_gravity->addAction(new GravityActionF(0));
+    pg_gravity->addAction(new GravityActionF(100));
     
     ParticleManager::get()->addEmitter(e2);
 
@@ -82,25 +84,40 @@ void timerCallback (int value)
 void redraw(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Apply the camera transformation.
+    ui->ApplyViewingTransformation();
+
     ParticleManager::get()->render(msecs * 0.001f);
+
     glutSwapBuffers();
 }
 
-void myReshape(int w, int h)
+void reshape(int width, int height)
 {
-    glViewport(0, 0, w, h);
-    W = w;
-    H = h;
+    windowWidth = width;
+    windowHeight = height;
+    
+    if( width <= 0 || height <= 0 ) return;
+    
+    ui->WindowX() = width;
+    ui->WindowY() = height;
+    
+    ui->Aspect() = float( width ) / height;
+    ui->SetupViewport();
+    ui->SetupViewingFrustum();
 }
 
 void mouse(int button, int state, int x, int y)
 {
-    // TODO
+    // Just pass it on to the ui controller.
+    ui->MouseFunction(button, state, x, y);
 }
 
 void motion(int x, int y)
 {
-    // TODO
+    // Just pass it on to the ui controller.
+    ui->MotionFunction(x, y);
 }
 
 void keyboard(GLubyte key, GLint x, GLint y)
@@ -120,21 +137,19 @@ int main(int argc, char **argv)
 
     glutCreateWindow("kiss_particle demo");
     glutDisplayFunc(redraw);
-    glutReshapeFunc(myReshape);
+    glutReshapeFunc(reshape);
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
     glutKeyboardFunc(keyboard);
 
-    glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
-    glMatrixMode(GL_PROJECTION);
-    gluPerspective( /* field of view in degree */ 40.0,
-            /* aspect ratio */ 1.0,
-            /* Z near */ 1.0, /* Z far */ 200.0);
-    glMatrixMode(GL_MODELVIEW);
-    gluLookAt(0.0, 0.0, 80.0,  /* eye position */
-            0.0, 0.0, 0.0,      /* center is at (0,0,0) */
-            0.0, 1.0, 0.);      /* up is in positive Y direction */
+
+    ui = new UIState;
+    ui->Trans() = glm::vec3(0, 0, 0);
+    ui->Radius() = 80;
+    ui->Near() = .1;
+    ui->Far() = 1000;
+    ui->CTrans() = glm::vec3(0, 0, -40);
 
     glutMainLoop();
     return 0;             /* ANSI C requires main to return int. */
