@@ -16,8 +16,12 @@ ParticleManager::~ParticleManager()
     reset();
 }
 
-ParticleManager::newGroup(const std::string &gname)
+PGroup* ParticleManager::newGroup(const std::string &gname)
 {
+    PGroup *p = new PGroup();
+    get()->groups_[gname] = p;
+    return p;
+}
     
 
 // A combined update/render call...

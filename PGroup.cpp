@@ -21,8 +21,20 @@ void PGroup::render(void)
     
 }
 
+void PGroup::addAction(PActionF* pa)
+{
+    actions_.push_back(pa);
+}
+
 void PGroup::update(float dt)
 {
+    // apply any actions we have.
+    std::list<PActionF*>::iterator pfit;
+    for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
+    {
+        (**pfit)(particles_, dt);
+    }
+
     std::list<Particle *>::iterator pit;
     for (pit = particles_.begin(); pit != particles_.end(); pit++) {
         (*pit)->update(dt);

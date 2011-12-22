@@ -41,11 +41,16 @@ void ptest(void)
     _add(1,0,0,0);
     _add(0,1,0,0);
 #undef _add
+
+    PGroup *pg_gravity = ParticleManager::newGroup("gravity");
     Emitter *e2 = ParticleManager::get()->newEmitter();
     e2->setParticleLocationF(new locationF(2.f))
-            ->setParticleColorF(new discreteColorF(c))
+        ->setParticleColorF(new discreteColorF(c))
         ->setParticleVelocityF(new velocityF(2.f, 5.f, 2.f));
-    e2->outputGroup = "asdf";
+    e2->outputGroup = "gravity"; 
+
+    pg_gravity->addAction(new GravityActionF(100));
+    
     ParticleManager::get()->addEmitter(e2);
 
 }
