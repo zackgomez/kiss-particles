@@ -42,6 +42,21 @@ protected:
     float vel_;
 };
 
+struct velocityCombinerF : public velocityF
+{
+    // combines f1 with f2 like a*f1 + (1-a)*f2
+    velocityCombinerF(velocityF *f1, velocityF *f2, float a) :
+        f1_(f1), f2_(f2), a_(a)
+    { }
+    ~velocityCombinerF();
+
+    virtual glm::vec3 operator() (const glm::vec3 &epos, const glm::vec3 &ppos);
+
+protected:
+    velocityF *f1_, *f2_;
+    const float a_;
+};
+
 // Assumes that locations are on a circle around epos. Givens them a velocity
 // pointing "up" and away from the center
 struct coneVelocityF : public velocityF

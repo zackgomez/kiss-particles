@@ -69,6 +69,17 @@ glm::vec3 velocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
     return normalRandom(mu_, 0) * glm::normalize(epos - ppos) / vel_;
 }
 
+velocityCombinerF::~velocityCombinerF()
+{
+    delete f1_;
+    delete f2_;
+}
+
+glm::vec3 velocityCombinerF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
+{
+    return a_ * (*f1_)(epos, ppos) + (1 - a_) * (*f2_)(epos, ppos);
+}
+
 glm::vec3 coneVelocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
 {
     glm::vec3 circledir = glm::normalize(epos - ppos);

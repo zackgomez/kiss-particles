@@ -68,7 +68,21 @@ void ptest(void)
      ->setParticleLifetimeF(new lifetimeNormalF(0.2, 0.1))
      ->setOutputRate(2500)
      ->setParticleColorF(new discreteColorF(c));
+    ParticleManager::get()->addEmitter(e);
 
+    // bottom right emitter
+    // A fake spinning sphere
+    up = glm::vec3(0, 1, 0);
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(glm::vec3(10.0, -10.0, 0.0))
+     ->setParticleLocationF(new circleLocationF(3.0f, up))
+     ->setParticleVelocityF(new velocityCombinerF(
+                 new coneVelocityF(4.f, 1.f, up, 0.5),
+                 new circleTangentVelocityF(4., 1.f, up),
+                 0.5))
+     ->setParticleLifetimeF(new lifetimeNormalF(0.2, 0.1))
+     ->setOutputRate(2500)
+     ->setParticleColorF(new discreteColorF(c));
     ParticleManager::get()->addEmitter(e);
 
 
