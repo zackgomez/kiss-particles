@@ -32,9 +32,11 @@ void ConstForceF::operator() (std::list<Particle*> &parts, float dt)
 
 }
 
-CentripetalForceF::CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up) :
+CentripetalForceF::CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up,
+        float radius) :
     center_(center),
-    up_(glm::normalize(up))
+    up_(glm::normalize(up)),
+    radius_(radius)
 { }
 
 void CentripetalForceF::operator() (std::list<Particle*> &parts, float dt)
@@ -58,13 +60,12 @@ void CentripetalForceF::operator() (std::list<Particle*> &parts, float dt)
 
         // Speed of the circle component
         float speed = glm::length(sideVel);
-        float radius = glm::length(outvec);
-        glm::vec3 outdir = outvec / radius;
+        glm::vec3 outdir = glm::normalize(outvec);
 
         // Apply inward force
         // inward force, centripetal force see:
         // http://en.wikipedia.org/wiki/Centripetal_force
-        p->vel += -outdir * speed * speed / radius * dt;
+        p->vel += -outdir * speed * speed / radius_ * dt;
     } 
 }
 

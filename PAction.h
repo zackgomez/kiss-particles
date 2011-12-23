@@ -47,7 +47,8 @@ private:
 class CentripetalForceF : public PActionF
 {
 public:
-    CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up);
+    CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up,
+            float radius);
     virtual void operator() (std::list<Particle*> &, float dt);
 
     void setCenter(const glm::vec3& center);
@@ -55,6 +56,7 @@ public:
 private:
     glm::vec3 center_;
     const glm::vec3 up_;
+    const float radius_;
 };
 
 class PPointAttractorF : public PActionF

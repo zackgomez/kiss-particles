@@ -45,6 +45,7 @@ void ptest(void)
 #undef _add
 
     glm::vec3 up;
+    float radius;
 
     Emitter *e;
     // Left emitter
@@ -58,15 +59,16 @@ void ptest(void)
     // center emitter
     // tornado hazard
     up = glm::vec3(0, 1, 0);
+    radius = 2.f;
     glm::vec3 tornado_center = glm::vec3(0.f, -3.f, 0.f);
 
     PGroup *pg_tornado = ParticleManager::newGroup("tornado");
-    pg_tornado->addAction(new CentripetalForceF(tornado_center, up));
+    pg_tornado->addAction(new CentripetalForceF(tornado_center, up, radius));
     pg_tornado->addAction(new ConstForceF(4, up));
 
     e = ParticleManager::get()->newEmitter();
     e->setLocation(tornado_center)
-     ->setParticleLocationF(new circleLocationF(2.f, up))
+     ->setParticleLocationF(new circleLocationF(radius, up))
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
      ->setOutputRate(2500)
@@ -77,15 +79,15 @@ void ptest(void)
     // top left, hopefully 
     // tornado hazard
     up = glm::vec3(0, 1, 0);
+    radius = 2.f;
     tornado_center += glm::vec3(-10, 10, 0);
 
-
     pg_tornado = ParticleManager::newGroup("tornado2");
-    pg_tornado->addAction(new CentripetalForceF(tornado_center, up));
+    pg_tornado->addAction(new CentripetalForceF(tornado_center, up, radius));
 
     e = ParticleManager::get()->newEmitter();
     e->setLocation(tornado_center)
-     ->setParticleLocationF(new circleLocationF(2.f, up))
+     ->setParticleLocationF(new circleLocationF(radius, up))
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
      ->setOutputRate(2500)
