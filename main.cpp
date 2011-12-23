@@ -89,14 +89,17 @@ void ptest(void)
     // Center emitter
     PGroup *pg_gravity = ParticleManager::newGroup("gravity");
     Emitter *e2 = ParticleManager::get()->newEmitter();
-    e2->setParticleLocationF(new locationF(2.f))
+    e2->setParticleLocationF(new locationF(1.f))
         ->setParticleColorF(new discreteColorF(c))
-        ->setParticleVelocityF(new velocityF(3.f, 5.f, 2.f))
-        ->setParticleLifetimeF(new lifetimeF(0.5f));
+        ->setParticleVelocityF(new velocityF(1.f, 5.f, 2.f))
+        ->setParticleLifetimeF(new lifetimeF(5.f));
     e2->outputGroup = "gravity"; 
 
     pg_gravity->addAction(new GravityActionF(55));
-    pg_gravity->addAction(new PPointAttractorF(glm::vec3(-3,10,0), 6000));
+    glm::vec3 blackhole_loc = glm::vec3(-3, 10, 0);
+    pg_gravity->addAction(new PPointAttractorF(blackhole_loc, 6000));
+    pg_gravity->addAction(new PPointSinkF(blackhole_loc, 2.0f));
+    pg_gravity->addAction(new PYPlaneSinkF(-10));
     
     ParticleManager::get()->addEmitter(e2);
 
