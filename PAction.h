@@ -56,11 +56,12 @@ private:
     float tol_;
 };
 
-class PYPlaneSinkF : public PActionF
+class PPlaneSinkF : public PActionF
 {
 public:
-    PYPlaneSinkF(float y);
+    PPlaneSinkF(const glm::vec3 &pt, const glm::vec3 &normal);
     virtual void operator() (std::list<Particle*> &, float);
+
 private:
-    float y_;
+    glm::vec3 pt_, normal_;
 };

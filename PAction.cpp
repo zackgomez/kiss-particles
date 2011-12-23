@@ -107,13 +107,15 @@ void PPointSinkF::operator() (std::list<Particle*> &parts, float dt)
 }
 
 
-PYPlaneSinkF::PYPlaneSinkF(float y_input) : y_(y_input) { }
-void PYPlaneSinkF::operator() (std::list<Particle*> &parts, float dt)
+PPlaneSinkF::PPlaneSinkF(const glm::vec3 &pt, const glm::vec3 &normal) : pt_(pt), normal_(normal) { }
+void PPlaneSinkF::operator() (std::list<Particle*> &parts, float dt)
 {
     std::list<Particle*>::iterator pit;
     for (pit = parts.begin(); pit != parts.end(); pit++)
     {
-        if ((*pit)->loc.y < y_)
+        Particle *p = *pit;
+        // check to see if it's on the same side as the plane
+        if (glm::dot(normal_, p->loc - pt_) < 0.f)
         {
             delete *pit;
             pit = parts.erase(pit);
