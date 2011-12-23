@@ -11,6 +11,7 @@ public:
     void update(float);
     void addAction(PActionF*);
     
+    int numParticles(void);
 private:
     std::list<Particle*> particles_;
     std::list<PActionF*> actions_;

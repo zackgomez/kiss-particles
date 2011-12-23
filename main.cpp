@@ -183,16 +183,30 @@ void timerCallback (int value)
     glutPostRedisplay();
     glutTimerFunc(msecs, timerCallback, value);
 }
-
+    void
+showMessage(GLfloat x, GLfloat y, GLfloat z, char *message)
+{
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glScalef(.02, .02, .02);
+    while (*message) {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, *message);
+        message++;
+    }
+    glPopMatrix();
+}
 void redraw(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Apply the camera transformation.
     ui->ApplyViewingTransformation();
-
+    char buffer [50];
+    int n, a=5, b=3;
+    int np = ParticleManager::get()->numParticles();
+    n=sprintf (buffer, "particles: %d", np); 
+    showMessage(-15, 15, 0, buffer);
     ParticleManager::get()->render(msecs * 0.001f);
-
     glutSwapBuffers();
 }
 

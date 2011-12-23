@@ -30,6 +30,8 @@ public:
 
     static PGroup* newGroup(const std::string &groupName);
 
+    int numParticles(void);
+
 private:
     ParticleManager();
     ~ParticleManager();

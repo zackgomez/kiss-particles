@@ -21,6 +21,12 @@ void PGroup::render(void)
     
 }
 
+int PGroup::numParticles(void)
+{
+    return particles_.size();
+}
+
+
 void PGroup::addAction(PActionF* pa)
 {
     actions_.push_back(pa);

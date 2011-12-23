@@ -22,6 +22,18 @@ PGroup* ParticleManager::newGroup(const std::string &gname)
     get()->groups_[gname] = p;
     return p;
 }
+
+int ParticleManager::numParticles(void)
+{
+    int cnt = 0;
+    std::map<std::string, PGroup*>::iterator pit;
+    for (pit = groups_.begin(); pit != groups_.end(); pit++)
+    {
+        cnt += pit->second->numParticles();
+    }
+    return cnt;
+}
+
     
 
 // A combined update/render call...
