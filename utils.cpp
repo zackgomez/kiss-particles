@@ -18,6 +18,12 @@ float normalRandom(float mu, float sigma)
     return mu + (ans - 3) * sigma;
 }
 
+float randomFloat(float min, float max)
+{
+    return static_cast<float>(rand()) / RAND_MAX * (max - min) + min;
+}
+
+
 void test_random() {
     float s1 = 1;
     float mu = 7;

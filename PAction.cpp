@@ -3,15 +3,14 @@
 #include "utils.h"
 #include "PEmitter.h"
 
-#define RANDFLOAT() (float(rand())/RAND_MAX)
 PERandomF::PERandomF(float howRandom) : sigma_(howRandom) { }
 
 void PERandomF::operator() (Emitter* em, float dt)
 {
-    glm::vec3 dir(RANDFLOAT(), RANDFLOAT(), RANDFLOAT());
+    glm::vec3 dir(randomFloat(-1, 1), randomFloat(-1, 1), randomFloat(-1, 1));
     dir = glm::normalize(dir);
 
-    em->loc_ = dir * dt * sigma_; 
+    em->loc_ += dir * dt * sigma_; 
 
 }
 void DefaultActionF::operator()(std::list<Particle*>&, float dt)

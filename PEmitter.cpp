@@ -6,56 +6,6 @@
 #include "utils.h"
 #include "PAction.h"
 
-
-// Approximate a normal variable.
-// http://en.wikipedia.org/wiki/Normal_distribution#Generating_values_from_normal_distribution
-// A sum of several uniform variables is like a normal distr.
-// (central limit theorom)
-float normalRandom(float mu, float sigma)
-{
-    float ans = 0.f;
-    for (int i = 0; i < 6; i++)
-    {
-        ans += static_cast<float>(rand()) / RAND_MAX;
-    }
-    return mu + (ans - 3) * sigma;
-}
-
-float random_float(float min = 0, float max = 1)
-{
-    return static_cast<float>(rand()) / RAND_MAX * (max - min) + min;
-}
-
-void test_random() {
-    float s1 = 1;
-    float mu = 7;
-    float sum = 0.f;
-    for (int i = 0; i < 100000; i++)
-    {
-        sum += normalRandom(s1, mu);
-    }
-    sum /= 100000;
-    printf("Average is %f\n", sum);
-
-    s1 = 10;
-    mu = -100;
-    for (int i = 0; i < 10; i++)
-    {
-        printf("normalRandom(mu = %f, sigma = %f) = %f\n", mu, s1, normalRandom(mu, s1));
-    }
-}
-
-glm::vec3 pointOnSphere(float r, const glm::vec3 &pos)
-{
-    float theta = M_PI * float(rand()) / RAND_MAX;
-    float phi = 2 * M_PI * float(rand()) / RAND_MAX;
-    glm::vec3 ans;
-    ans.x = r * sin(theta) * cos(phi);
-    ans.y = r * sin(theta) * sin(phi);
-    ans.z = r * cos(theta);
-    return pos + ans;
-}
-
 lifetimeNormalF::lifetimeNormalF(float mu_, float variance) 
     : lifetimeF(mu_), var_(variance)
 { }
@@ -119,7 +69,7 @@ glm::vec3 circleLocationF::operator() (const glm::vec3 &epos)
             0  + upvec_.y * upvec_.z * 1 / (1 + upvec_.x),
             1);
 
-    float angle_deg = random_float(0, 360);
+    float angle_deg = randomFloat(0, 360);
 
     glm::mat4 rotmat = glm::rotate(glm::mat4(1.f), angle_deg,
             upvec_);

@@ -76,8 +76,7 @@ void ptest(void)
     // top left, hopefully 
     // tornado hazard
     up = glm::vec3(0, 1, 0);
-    tornado_center.y += 10;
-    tornado_center.x -= 10;
+    tornado_center += glm::vec3(-10, 10, 0);
 
 
     pg_tornado = ParticleManager::newGroup("tornado2");
@@ -92,7 +91,7 @@ void ptest(void)
      ->setParticleColorF(new discreteColorF(tornadoc));
     e->outputGroup = "tornado2";
     ParticleManager::get()->addEmitter(e);
-    e->addEmitterAction(new PERandomF(50));
+    e->addEmitterAction(new PERandomF(5));
 
     // Right emitter
     // black hole
