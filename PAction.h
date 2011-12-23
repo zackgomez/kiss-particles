@@ -42,10 +42,11 @@ private:
     float g_;
 };
 
-class TornadoActionF : public PActionF
+// Centripetal force around a line oriented by center and up
+class CentripetalForceF : public PActionF
 {
 public:
-    TornadoActionF(const glm::vec3 &center, const glm::vec3 &up);
+    CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up);
     virtual void operator() (std::list<Particle*> &, float dt);
 
 private:

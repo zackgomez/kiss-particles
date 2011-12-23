@@ -61,7 +61,8 @@ void ptest(void)
     glm::vec3 tornado_center = glm::vec3(0.f, -3.f, 0.f);
 
     PGroup *pg_tornado = ParticleManager::newGroup("tornado");
-    pg_tornado->addAction(new TornadoActionF(tornado_center, up));
+    pg_tornado->addAction(new CentripetalForceF(tornado_center, up));
+    pg_tornado->addAction(new GravityActionF(-4));
 
     e = ParticleManager::get()->newEmitter();
     e->setLocation(tornado_center)
@@ -80,7 +81,7 @@ void ptest(void)
 
 
     pg_tornado = ParticleManager::newGroup("tornado2");
-    pg_tornado->addAction(new TornadoActionF(tornado_center, up));
+    pg_tornado->addAction(new CentripetalForceF(tornado_center, up));
 
     e = ParticleManager::get()->newEmitter();
     e->setLocation(tornado_center)
