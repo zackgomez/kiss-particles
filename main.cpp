@@ -58,7 +58,7 @@ void ptest(void)
     // center emitter
     // tornado hazard
     up = glm::vec3(0, 1, 0);
-    glm::vec3 tornado_center = glm::vec3(0.f, -2.f, 0.f);
+    glm::vec3 tornado_center = glm::vec3(0.f, -3.f, 0.f);
 
     PGroup *pg_tornado = ParticleManager::newGroup("tornado");
     pg_tornado->addAction(new TornadoActionF(tornado_center, up));
@@ -67,7 +67,7 @@ void ptest(void)
     e->setLocation(tornado_center)
      ->setParticleLocationF(new circleLocationF(2.f, up))
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
-     ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.0))
+     ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
      ->setOutputRate(2500)
      ->setParticleColorF(new discreteColorF(tornadoc));
     e->outputGroup = "tornado";
@@ -127,7 +127,7 @@ void ptest(void)
     // looks like a firework
     PGroup *pg_gravity = ParticleManager::newGroup("gravity");
     Emitter *e2 = ParticleManager::get()->newEmitter();
-    e2->setParticleLocationF(new locationF(5.f))
+    e2->setParticleLocationF(new locationF(3.f))
         ->setParticleColorF(new discreteColorF(c))
         ->setParticleVelocityF(new circleTangentVelocityF(0.f, 0.f, glm::vec3(0, 1, 0)))
         ->setParticleLifetimeF(new lifetimeF(5.f))
@@ -135,10 +135,14 @@ void ptest(void)
     e2->outputGroup = "gravity"; 
 
     //pg_gravity->addAction(new GravityActionF(55));
-    glm::vec3 blackhole_loc = glm::vec3(0, -10, 0);
+    glm::vec3 blackhole_loc = glm::vec3(0, -8, 0);
+    glm::vec3 blackhole_loc2 = glm::vec3(-12, -20, 0);
     pg_gravity->addAction(new PPointAttractorF(blackhole_loc, 50));
     pg_gravity->addAction(new PPointSinkF(blackhole_loc, .8f));
     pg_gravity->addAction(new PPlaneSinkF(blackhole_loc, glm::vec3(-1, 0, 0)));
+    pg_gravity->addAction(new PPointAttractorF(blackhole_loc2, 50));
+    pg_gravity->addAction(new PPointSinkF(blackhole_loc2, .8f));
+    pg_gravity->addAction(new PPlaneSinkF(blackhole_loc2, glm::vec3(0, 1, 0)));
     
     ParticleManager::get()->addEmitter(e2);
 
