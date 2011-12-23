@@ -9,7 +9,6 @@
 #include "PGroup.h"
 
 
-
 //
 // Particle system manager declaration.
 //

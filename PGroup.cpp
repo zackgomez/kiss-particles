@@ -1,7 +1,7 @@
 #include "PGroup.h"
 #include <iostream>
 #include "dprint.h"
-
+ 
 void PGroup::render(void) 
 {
     //std::cout << "PGroup::render" << std::endl;

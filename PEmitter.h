@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
-
+ 
 // Forward declaration necessary for friending
 class ParticleManager;
 

@@ -4,7 +4,7 @@
 #include "PEmitter.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstdlib>
-
+ 
 ParticleManager::ParticleManager()
 {
     // Make sure to set up the default particle group.
