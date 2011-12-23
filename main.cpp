@@ -62,7 +62,7 @@ void ptest(void)
 
     PGroup *pg_tornado = ParticleManager::newGroup("tornado");
     pg_tornado->addAction(new CentripetalForceF(tornado_center, up));
-    pg_tornado->addAction(new GravityActionF(-4));
+    pg_tornado->addAction(new ConstForceF(4, up));
 
     e = ParticleManager::get()->newEmitter();
     e->setLocation(tornado_center)
