@@ -68,6 +68,11 @@ void CentripetalForceF::operator() (std::list<Particle*> &parts, float dt)
     } 
 }
 
+void CentripetalForceF::setCenter(const glm::vec3 &center)
+{
+    center_ = center;
+}
+
 PPointAttractorF::PPointAttractorF(const glm::vec3 &pos, float magnitude) :
     pos_(pos), g_(magnitude)
 { }

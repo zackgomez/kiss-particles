@@ -50,8 +50,10 @@ public:
     CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up);
     virtual void operator() (std::list<Particle*> &, float dt);
 
+    void setCenter(const glm::vec3& center);
+
 private:
-    const glm::vec3 center_;
+    glm::vec3 center_;
     const glm::vec3 up_;
 };
 
