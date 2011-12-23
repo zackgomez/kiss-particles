@@ -139,6 +139,8 @@ protected:
     std::vector<glm::vec4> colors_;
 };
 
+class PEmitterActionF;
+
 //
 // The emitter class is the main particle engine configuration point.
 // With its setter methods particle lifetime, location, and spew rate
@@ -164,6 +166,7 @@ public:
     // have elapsed.
     void emit(std::list<Particle*>&, float dt);
 
+    void addEmitterAction(PEmitterActionF *);
     std::string outputGroup;
 private:
     Emitter();
@@ -183,9 +186,11 @@ private:
     // Each particle will be about this size.
     glm::vec3 size_;
 
+    std::list<PEmitterActionF *> eactions_;
     float timeRemaining_;
 
     friend class ParticleManager;
+    friend class PERandomF;
 };
 
 

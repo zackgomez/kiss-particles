@@ -2,11 +2,28 @@
 #include <list>
 #include "Particle.h"
 #include <glm/glm.hpp>
+
+class Emitter;
  
 class PActionF
 {
 public:
     virtual void operator() (std::list<Particle*> &, float dt) = 0;
+};
+
+class PEmitterActionF
+{
+public:
+    virtual void operator() (Emitter*, float) = 0;
+};
+
+class PERandomF : virtual public PEmitterActionF
+{
+public:
+    PERandomF(float howRandom);
+    virtual void operator() (Emitter*, float);
+private:
+    float sigma_;
 };
 
 class DefaultActionF : public PActionF 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include "utils.h"
+#include "PAction.h"
 
 
 // Approximate a normal variable.
@@ -165,8 +166,22 @@ bool Emitter::isDone() const
     return timeRemaining_ < 0;
 }
 
+
+void Emitter::addEmitterAction(PEmitterActionF *eaf)
+{
+    eactions_.push_back(eaf);
+}
+
 void Emitter::emit(std::list<Particle*>& particles, float dt) 
 {
+
+    // first apply emitter actions
+    std::list<PEmitterActionF*>::iterator ait;
+    for (ait = eactions_.begin(); ait != eactions_.end(); ait++)
+    {
+        (**ait)(this, dt);
+    }
+
     // first decrease time remaining _on the emitter_.
     timeRemaining_ -= dt;
 
