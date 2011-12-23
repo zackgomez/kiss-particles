@@ -70,8 +70,8 @@ void ptest(void)
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
      ->setOutputRate(2500)
-     ->setParticleColorF(new discreteColorF(tornadoc));
-    e->outputGroup = "tornado";
+     ->setParticleColorF(new discreteColorF(tornadoc))
+     ->setOutputGroup("tornado");
     ParticleManager::get()->addEmitter(e);
 
     // top left, hopefully 
@@ -89,8 +89,8 @@ void ptest(void)
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
      ->setOutputRate(2500)
-     ->setParticleColorF(new discreteColorF(tornadoc));
-    e->outputGroup = "tornado2";
+     ->setParticleColorF(new discreteColorF(tornadoc))
+     ->setOutputGroup("tornado2");
     ParticleManager::get()->addEmitter(e);
     e->addEmitterAction(new PERandomF(5));
 
@@ -152,8 +152,8 @@ void ptest(void)
         ->setParticleColorF(new discreteColorF(c))
         ->setParticleVelocityF(new circleTangentVelocityF(0.f, 0.f, glm::vec3(0, 1, 0)))
         ->setParticleLifetimeF(new lifetimeF(5.f))
-        ->setLocation(glm::vec3(-10, -10, 0));
-    e2->outputGroup = "gravity"; 
+        ->setLocation(glm::vec3(-10, -10, 0))
+        ->setOutputGroup("gravity"); 
 
     //pg_gravity->addAction(new GravityActionF(55));
     glm::vec3 blackhole_loc = glm::vec3(0, -8, 0);
@@ -183,16 +183,32 @@ void timerCallback (int value)
     glutPostRedisplay();
     glutTimerFunc(msecs, timerCallback, value);
 }
-
+    void
+showMessage(GLfloat x, GLfloat y, GLfloat z, char *message)
+{
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glScalef(.02, .02, .02);
+    while (*message) {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, *message);
+        message++;
+    }
+    glPopMatrix();
+}
 void redraw(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Apply the camera transformation.
     ui->ApplyViewingTransformation();
-
+    char buffer [50];
+    static int cnt = 0;
+    cnt++;
+    static int np = ParticleManager::get()->numParticles();
+    if (!(cnt % 100)) np = ParticleManager::get()->numParticles();
+    sprintf (buffer, "particles: %d", np); 
+    showMessage(-15, 15, 0, buffer);
     ParticleManager::get()->render(msecs * 0.001f);
-
     glutSwapBuffers();
 }
 

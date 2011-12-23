@@ -161,13 +161,15 @@ public:
     // How much time is left before this emitter expires?
     Emitter* setTimeRemaining(float);
 
+    Emitter* setOutputGroup(const std::string &);
+
     bool isDone() const;
     // The update function. Spew some new particles, given that dt seconds
     // have elapsed.
     void emit(std::list<Particle*>&, float dt);
 
     void addEmitterAction(PEmitterActionF *);
-    std::string outputGroup;
+
 private:
     Emitter();
 
@@ -187,7 +189,9 @@ private:
     glm::vec3 size_;
 
     std::list<PEmitterActionF *> eactions_;
+    std::string outputGroup_;   
     float timeRemaining_;
+
 
     friend class ParticleManager;
     friend class PERandomF;

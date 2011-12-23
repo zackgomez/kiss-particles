@@ -22,6 +22,18 @@ PGroup* ParticleManager::newGroup(const std::string &gname)
     get()->groups_[gname] = p;
     return p;
 }
+
+int ParticleManager::numParticles(void)
+{
+    int cnt = 0;
+    std::map<std::string, PGroup*>::iterator pit;
+    for (pit = groups_.begin(); pit != groups_.end(); pit++)
+    {
+        cnt += pit->second->numParticles();
+    }
+    return cnt;
+}
+
     
 
 // A combined update/render call...
@@ -38,7 +50,7 @@ void ParticleManager::render(float dt)
     std::list<Emitter*>::iterator eit;
     for (eit = emitters_.begin(); eit != emitters_.end(); eit++)
     {
-        std::string og = (*eit)->outputGroup;
+        std::string og = (*eit)->outputGroup_;
         //DPRINT(groups_.find(og)->second);
         // Freak the fuck out if we can't find the requested group.
         if (!groups_.count(og)) 
