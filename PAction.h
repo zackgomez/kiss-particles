@@ -24,3 +24,14 @@ public:
 private:
     float g_;
 };
+
+class TornadoActionF : public PActionF
+{
+public:
+    TornadoActionF(const glm::vec3 &center, const glm::vec3 &up);
+    virtual void operator() (std::list<Particle*> &, float dt);
+
+private:
+    const glm::vec3 center_;
+    const glm::vec3 up_;
+};

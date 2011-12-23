@@ -28,6 +28,24 @@ void ptest(void)
     _add(1,1,0,0);
 #undef _add
 
+    std::vector<glm::vec4> tornadoc;
+#define _add(_r,_g,_b,_a) tornadoc.push_back(glm::vec4(_r,_g,_b,_a))
+    _add(0.8, 1.8, 0.8, 1);
+    _add(0.6, 1.6, 0.6, 1);
+    _add(0.6, 1.6, 0.6, 1);
+    _add(0.9, 1.9, 0.9, 1);
+    _add(0.9, 1.9, 0.9, 1);
+    _add(0.8, 1.8, 0.8, 1);
+    _add(0.8, 1.8, 0.8, 1);
+    _add(0.2, 1.2, 0.2, 1);
+    _add(0.5, 1.5, 0.5, 1);
+    _add(0.5, 1.5, 0.5, 1);
+    _add(0.5, 1.5, 0.5, 1);
+    _add(0.8, 1.8, 0.8, 1);
+#undef _add
+
+    glm::vec3 up;
+
     Emitter *e;
     // Left emitter
     e = ParticleManager::get()->newEmitter();
@@ -37,8 +55,27 @@ void ptest(void)
      ->setParticleLifetimeF(new lifetimeNormalF(0.5, 0.1));
     ParticleManager::get()->addEmitter(e);
 
+    // center emitter
+    // tornado hazard
+    up = glm::vec3(0, 1, 0);
+    glm::vec3 tornado_center = glm::vec3(0.f, -2.f, 0.f);
+
+    PGroup *pg_tornado = ParticleManager::newGroup("tornado");
+    pg_tornado->addAction(new TornadoActionF(tornado_center, up));
+
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(tornado_center)
+     ->setParticleLocationF(new circleLocationF(2.f, up))
+     ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
+     ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.0))
+     ->setOutputRate(2500)
+     ->setParticleColorF(new discreteColorF(tornadoc));
+    e->outputGroup = "tornado";
+    ParticleManager::get()->addEmitter(e);
+
     // Right emitter
-    glm::vec3 up(0, 0, 1);
+    // black hole
+    up = glm::vec3(0, 0, 1);
     e = ParticleManager::get()->newEmitter();
     e->setLocation(glm::vec3(10.0, 0.0, 0.0))
      ->setParticleLocationF(new circleLocationF(3.0f, up))
@@ -59,7 +96,7 @@ void ptest(void)
     ParticleManager::get()->addEmitter(e);
 
     // top right emitter
-    // A fake spinning sphere
+    // "jump puff"
     up = glm::vec3(0, 1, 0);
     e = ParticleManager::get()->newEmitter();
     e->setLocation(glm::vec3(10.0, 10.0, 0.0))
@@ -71,7 +108,7 @@ void ptest(void)
     ParticleManager::get()->addEmitter(e);
 
     // bottom right emitter
-    // A fake spinning sphere
+    // combiner example, spinning disc thingy
     up = glm::vec3(0, 1, 0);
     e = ParticleManager::get()->newEmitter();
     e->setLocation(glm::vec3(10.0, -10.0, 0.0))
@@ -86,15 +123,17 @@ void ptest(void)
     ParticleManager::get()->addEmitter(e);
 
 
-    // Center emitter
+    // top left emitter
+    // looks like a firework
     PGroup *pg_gravity = ParticleManager::newGroup("gravity");
     Emitter *e2 = ParticleManager::get()->newEmitter();
     e2->setParticleLocationF(new locationF(2.f))
         ->setParticleColorF(new discreteColorF(c))
-        ->setParticleVelocityF(new velocityF(3.f, 5.f, 2.f));
+        ->setParticleVelocityF(new velocityF(3.f, 5.f, 2.f))
+        ->setLocation(glm::vec3(-10.f, 10.f, 0.f));
     e2->outputGroup = "gravity"; 
 
-    pg_gravity->addAction(new GravityActionF(15));
+    pg_gravity->addAction(new GravityActionF(25));
     
     ParticleManager::get()->addEmitter(e2);
 
