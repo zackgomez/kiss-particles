@@ -123,17 +123,22 @@ void ptest(void)
     ParticleManager::get()->addEmitter(e);
 
 
-    // top left emitter
+    // bottom left emitter
     // looks like a firework
     PGroup *pg_gravity = ParticleManager::newGroup("gravity");
     Emitter *e2 = ParticleManager::get()->newEmitter();
-    e2->setParticleLocationF(new locationF(2.f))
+    e2->setParticleLocationF(new locationF(1.f))
         ->setParticleColorF(new discreteColorF(c))
-        ->setParticleVelocityF(new velocityF(3.f, 5.f, 2.f))
-        ->setLocation(glm::vec3(-10.f, 10.f, 0.f));
+        ->setParticleVelocityF(new velocityF(1.f, 5.f, 2.f))
+        ->setParticleLifetimeF(new lifetimeF(5.f))
+        ->setLocation(glm::vec3(-10, -10, 0));
     e2->outputGroup = "gravity"; 
 
-    pg_gravity->addAction(new GravityActionF(25));
+    pg_gravity->addAction(new GravityActionF(55));
+    glm::vec3 blackhole_loc = glm::vec3(-13, 0, 0);
+    pg_gravity->addAction(new PPointAttractorF(blackhole_loc, 6000));
+    pg_gravity->addAction(new PPointSinkF(blackhole_loc, 2.0f));
+    pg_gravity->addAction(new PYPlaneSinkF(-20));
     
     ParticleManager::get()->addEmitter(e2);
 

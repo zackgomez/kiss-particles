@@ -5,7 +5,7 @@ LDFLAGS= -lGL -lglut -lGLU
 all: kiss_particles libkiss_particles.a
 
 kiss_particles: main.o uistate.o ArcBall.o libkiss_particles.a
-	g++ $(CXXFLAGS) $(LDFLAGS) -o $@ $^
+	g++ $(CXXFLAGS) -o $@ $^ $(LDFLAGS) 
 
 libkiss_particles.a:  PEmitter.o PManager.o Particle.o PGroup.o PAction.o
 	ar rcs $@ $^
