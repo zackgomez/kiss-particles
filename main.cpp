@@ -202,9 +202,11 @@ void redraw(void)
     // Apply the camera transformation.
     ui->ApplyViewingTransformation();
     char buffer [50];
-    int n, a=5, b=3;
-    int np = ParticleManager::get()->numParticles();
-    n=sprintf (buffer, "particles: %d", np); 
+    static int cnt = 0;
+    cnt++;
+    static int np = ParticleManager::get()->numParticles();
+    if (!(cnt % 100)) np = ParticleManager::get()->numParticles();
+    sprintf (buffer, "particles: %d", np); 
     showMessage(-15, 15, 0, buffer);
     ParticleManager::get()->render(msecs * 0.001f);
     glutSwapBuffers();
