@@ -91,10 +91,12 @@ void ptest(void)
     Emitter *e2 = ParticleManager::get()->newEmitter();
     e2->setParticleLocationF(new locationF(2.f))
         ->setParticleColorF(new discreteColorF(c))
-        ->setParticleVelocityF(new velocityF(3.f, 5.f, 2.f));
+        ->setParticleVelocityF(new velocityF(3.f, 5.f, 2.f))
+        ->setParticleLifetimeF(new lifetimeF(0.5f));
     e2->outputGroup = "gravity"; 
 
-    pg_gravity->addAction(new GravityActionF(15));
+    pg_gravity->addAction(new GravityActionF(55));
+    pg_gravity->addAction(new PPointAttractorF(glm::vec3(-3,10,0), 6000));
     
     ParticleManager::get()->addEmitter(e2);
 

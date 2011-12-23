@@ -24,3 +24,14 @@ public:
 private:
     float g_;
 };
+
+class PPointAttractorF : public PActionF
+{
+public:
+    PPointAttractorF(const glm::vec3 &pos, float magnitude);
+    virtual void operator() (std::list<Particle*> &, float);
+private:
+    glm::vec3 pos_;
+    float g_;
+};
+
