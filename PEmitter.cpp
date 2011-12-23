@@ -85,10 +85,6 @@ glm::vec3 circleTangentVelocityF::operator() (const glm::vec3 &epos, const glm::
     glm::vec3 circledir = glm::normalize(epos - ppos);
     glm::vec3 tandir = glm::cross(upvec_, circledir);
 
-    std::cout << "upvec_: " << upvec_.x << ' ' << upvec_.y << ' ' << upvec_.z << '\n';
-    std::cout << "circledir: " << circledir.x << ' ' << circledir.y << ' ' << circledir.z << '\n';
-    std::cout << "Tandir: " << tandir.x << ' ' << tandir.y << ' ' << tandir.z << '\n';
-
     float velmag = normalRandom(mu_, sigma_);
     return velmag * tandir;
 }

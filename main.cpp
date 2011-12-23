@@ -1,13 +1,3 @@
-
-/* Copyright (c) Mark J. Kilgard, 1994.  */
-
-/* This program is freely distributable without licensing fees 
-   and is provided without guarantee or warrantee expressed or 
-   implied. This program is -not- in the public domain. */
-
-/* New GLUT 3.0 glutGetModifiers() functionality used to make Shift-Left
-   mouse scale the dinosaur's size. */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,26 +15,6 @@ static UIState *ui;
 
 void ptest(void)
 {
-    Emitter *e;
-    // Left emitter
-    e = ParticleManager::get()->newEmitter();
-    e->setLocation(glm::vec3(-10.0, 0.0, 0.0))
-     ->setParticleLocationF(new locationF(3.f))
-     ->setParticleVelocityF(new velocityF(2.f, 20.f, 2.f));
-    ParticleManager::get()->addEmitter(e);
-
-    // Right emitter
-    glm::vec3 up(0, 1, 0);
-    e = ParticleManager::get()->newEmitter();
-    e->setLocation(glm::vec3(10.0, 0.0, 0.0))
-     ->setParticleLocationF(new circleLocationF(3.0f, up))
-     //->setParticleVelocityF(new coneVelocityF(4.f, 1.f, up, 0.5))
-     ->setParticleVelocityF(new circleTangentVelocityF(4.f, 1.f, up))
-     ->setParticleLifetimeF(new lifetimeNormalF(0.5, 0.1))
-     ->setOutputRate(1500);
-    ParticleManager::get()->addEmitter(e);
-    
-
     // Add a red + blue one
     std::vector<glm::vec4> c;
 #define _add(_r,_b,_g,_a) c.push_back(glm::vec4(_r,_g,_b,_a))
@@ -55,7 +25,52 @@ void ptest(void)
     _add(1,0,0,0);
     _add(1,0,0,0);
     _add(0,1,0,0);
+    _add(1,1,0,0);
 #undef _add
+
+    Emitter *e;
+    // Left emitter
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(glm::vec3(-10.0, 0.0, 0.0))
+     ->setParticleLocationF(new locationF(2.f))
+     ->setParticleVelocityF(new velocityF(5.f, 20.f, 2.f))
+     ->setParticleLifetimeF(new lifetimeNormalF(0.5, 0.1));
+    ParticleManager::get()->addEmitter(e);
+
+    // Right emitter
+    glm::vec3 up(0, 0, 1);
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(glm::vec3(10.0, 0.0, 0.0))
+     ->setParticleLocationF(new circleLocationF(3.0f, up))
+     ->setParticleVelocityF(new circleTangentVelocityF(4.f, 1.f, up))
+     ->setParticleLifetimeF(new lifetimeNormalF(0.5, 0.1))
+     ->setOutputRate(1500);
+    ParticleManager::get()->addEmitter(e);
+
+    // middle top emitter
+    // A fake spinning sphere
+    up = glm::vec3(0, 1, 0);
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(glm::vec3(0.0, 10.0, 0.0))
+     ->setParticleLocationF(new locationF(3.f))
+     ->setParticleVelocityF(new circleTangentVelocityF(4.f, 1.f, up))
+     ->setParticleLifetimeF(new lifetimeNormalF(0.2, 0.1))
+     ->setOutputRate(2500);
+    ParticleManager::get()->addEmitter(e);
+
+    // top right emitter
+    // A fake spinning sphere
+    up = glm::vec3(0, 1, 0);
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(glm::vec3(10.0, 10.0, 0.0))
+     ->setParticleLocationF(new circleLocationF(3.0f, up))
+     ->setParticleVelocityF(new coneVelocityF(4.f, 1.f, up, 0.5))
+     ->setParticleLifetimeF(new lifetimeNormalF(0.2, 0.1))
+     ->setOutputRate(2500)
+     ->setParticleColorF(new discreteColorF(c));
+
+    ParticleManager::get()->addEmitter(e);
+
 
     // Center emitter
     PGroup *pg_gravity = ParticleManager::newGroup("gravity");
