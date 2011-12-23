@@ -18,16 +18,16 @@ void DefaultActionF::operator()(std::list<Particle*>&, float dt)
     return;
 }
 
-GravityActionF::GravityActionF(float g) :
-    g_(g)
+ConstForceF::ConstForceF(float g, const glm::vec3 &dir) :
+    g_(g), dir_(glm::normalize(dir))
 { }
 
-void GravityActionF::operator() (std::list<Particle*> &parts, float dt)
+void ConstForceF::operator() (std::list<Particle*> &parts, float dt)
 {
     std::list<Particle*>::iterator pit;
     for (pit = parts.begin(); pit != parts.end(); pit++)
     {
-        (*pit)->vel.y -= g_ * dt;
+        (*pit)->vel += dir_ * g_ * dt;
     } 
 
 }

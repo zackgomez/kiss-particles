@@ -32,14 +32,15 @@ public:
     virtual void operator()(std::list<Particle*>&, float dt);
 };
 
-class GravityActionF : public PActionF
+class ConstForceF : public PActionF
 {
 public:
     // Constructor takes the gravity constant
-    GravityActionF(float g);
+    ConstForceF(float g, const glm::vec3 &dir);
     virtual void operator() (std::list<Particle*> &, float dt);
 private:
     float g_;
+    const glm::vec3 dir_;
 };
 
 // Centripetal force around a line oriented by center and up
