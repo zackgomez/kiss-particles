@@ -93,7 +93,6 @@ glm::vec4 discreteColorF::operator() ()
 }
 
 Emitter::Emitter() :
-    outputGroup("default"),
     lifetime_func(new lifetimeF(0.3f)),
     velocity_func(new velocityF(2.f, 50.f, 10.f)),
     location_func(new locationF(10.f)),
@@ -101,6 +100,7 @@ Emitter::Emitter() :
     loc_(glm::vec3(0.f)),
     rate_(400.f),
     size_(1.f),
+    outputGroup_("default"),
     timeRemaining_(HUGE_VAL)
 {
 }
@@ -160,6 +160,12 @@ void Emitter::emit(std::list<Particle*>& particles, float dt)
         */
         particles.push_back(p);
     }
+}
+
+Emitter* Emitter::setOutputGroup(const std::string &s)
+{
+    outputGroup_ = s;
+    return this;
 }
 
 Emitter* Emitter::setParticleLifetimeF(lifetimeF *lf)

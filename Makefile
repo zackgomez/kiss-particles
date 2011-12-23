@@ -1,5 +1,5 @@
 
-CXXFLAGS=-g -O0 -Wall -Iglm-0.9.2.7 -fpermissive
+CXXFLAGS=-g -O0 -Wall -Iglm-0.9.2.7 -fpermissive -Wreorder
 LDFLAGS= -lGL -lglut -lGLU
 
 all: kiss_particles libkiss_particles.a

@@ -70,8 +70,8 @@ void ptest(void)
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
      ->setOutputRate(2500)
-     ->setParticleColorF(new discreteColorF(tornadoc));
-    e->outputGroup = "tornado";
+     ->setParticleColorF(new discreteColorF(tornadoc))
+     ->setOutputGroup("tornado");
     ParticleManager::get()->addEmitter(e);
 
     // top left, hopefully 
@@ -89,8 +89,8 @@ void ptest(void)
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
      ->setOutputRate(2500)
-     ->setParticleColorF(new discreteColorF(tornadoc));
-    e->outputGroup = "tornado2";
+     ->setParticleColorF(new discreteColorF(tornadoc))
+     ->setOutputGroup("tornado2");
     ParticleManager::get()->addEmitter(e);
     e->addEmitterAction(new PERandomF(5));
 
@@ -152,8 +152,8 @@ void ptest(void)
         ->setParticleColorF(new discreteColorF(c))
         ->setParticleVelocityF(new circleTangentVelocityF(0.f, 0.f, glm::vec3(0, 1, 0)))
         ->setParticleLifetimeF(new lifetimeF(5.f))
-        ->setLocation(glm::vec3(-10, -10, 0));
-    e2->outputGroup = "gravity"; 
+        ->setLocation(glm::vec3(-10, -10, 0))
+        ->setOutputGroup("gravity"); 
 
     //pg_gravity->addAction(new GravityActionF(55));
     glm::vec3 blackhole_loc = glm::vec3(0, -8, 0);
