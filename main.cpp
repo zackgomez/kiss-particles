@@ -47,14 +47,20 @@ void ptest(void)
     glm::vec3 up;
     float radius;
 
+    PGroup* bounce_group = ParticleManager::newGroup("bounce");
     Emitter *e;
     // Left emitter
+    glm::vec3 left_loc = glm::vec3(-10.0, 0.0, 0.0);
     e = ParticleManager::get()->newEmitter();
-    e->setLocation(glm::vec3(-10.0, 0.0, 0.0))
+    e->setLocation(left_loc)
      ->setParticleLocationF(new locationF(2.f))
      ->setParticleVelocityF(new velocityF(5.f, 20.f, 2.f))
-     ->setParticleLifetimeF(new lifetimeNormalF(0.5, 0.1));
+     ->setParticleLifetimeF(new lifetimeNormalF(0.5, 0.1))
+     ->setOutputGroup("bounce");
     ParticleManager::get()->addEmitter(e);
+    bounce_group->addAction(
+        new PPlaneBounceF(left_loc - glm::vec3(0,1,0), 
+                          glm::vec3(0,1,0), 1)); 
 
     // center emitter
     // tornado hazard
@@ -90,7 +96,7 @@ void ptest(void)
      ->setParticleLocationF(new circleLocationF(radius, up))
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
-     ->setOutputRate(2500)
+     ->setOutputRate(500)
      ->setParticleColorF(new discreteColorF(tornadoc))
      ->setOutputGroup("tornado2");
     ParticleManager::get()->addEmitter(e);

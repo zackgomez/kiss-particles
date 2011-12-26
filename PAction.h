@@ -88,3 +88,26 @@ public:
 private:
     glm::vec3 pt_, normal_;
 };
+
+// Bounce action. For example, sparks bouncing off the floor.
+// Allows for non-elastic collisions, so particles don't bounce indefinitely.
+// (See the SC2 sparks on Terran command centers on Ultra graphics)
+class PPlaneBounceF : public PActionF
+{
+public:
+    // Constructor needs to specify a planepoint, normal vector, and elasticity 
+    PPlaneBounceF(const glm::vec3 & pt, 
+                  const glm::vec3 &normal_vec, 
+                  float elasticity);
+
+    virtual void operator() (std::list<Particle*> &, float);
+
+    void reflectParticleVelocity(Particle &p);
+
+private:
+    // vector and a point needed to specify a plane.
+    glm::vec3 point_;
+    glm::vec3 normal_;
+    float elasticity_;
+};
+

@@ -125,3 +125,33 @@ void PPlaneSinkF::operator() (std::list<Particle*> &parts, float dt)
         }
     }
 }
+
+PPlaneBounceF::PPlaneBounceF(const glm::vec3 & pt, 
+                  const glm::vec3 &normal_vec, 
+                  float elast) :
+    point_(pt), normal_(normal_vec), elasticity_(elast) { }
+
+
+void PPlaneBounceF::operator() (std::list<Particle*> &ps, float dt)
+{
+    // for each particle, check if it's over our plane
+    std::list<Particle*>::iterator pit;
+    for (pit = ps.begin(); pit != ps.end(); pit++)
+    {
+        if (glm::dot((*pit)->loc - point_, normal_) < 0.0f)
+        {
+            // particle in question is 'behind' the normal one
+            reflectParticleVelocity(**pit);
+        }
+    }
+}
+
+void PPlaneBounceF::reflectParticleVelocity(Particle &p)
+{
+    float magnitude = glm::length(p.vel);
+    glm::vec3 dn = normal_ - glm::normalize(p.vel);
+    // reflected vector
+    p.vel = magnitude * glm::vec3(0,1,0);//(normal_ - dn);
+    p.vel = magnitude * (normal_ - glm::normalize(p.vel));
+}
+
