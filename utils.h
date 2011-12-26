@@ -7,3 +7,5 @@ float randomFloat(float min = 0.f, float max = 1.f);
 void test_random();
 
 glm::vec3 pointOnSphere(float r, const glm::vec3 &pos);
+
+float frand();

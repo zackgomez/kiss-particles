@@ -96,6 +96,16 @@ void ptest(void)
     ParticleManager::get()->addEmitter(e);
     e->addEmitterAction(new PERandomF(5));
 
+    // bottom emitter
+    up = glm::vec3(0, 0, 1);
+    e = ParticleManager::get()->newEmitter();
+    e->setLocation(glm::vec3(0.0, -10.0, 0.0))
+     ->setParticleLocationF(new circleInteriorLocationF(3.0f, up))
+     ->setParticleVelocityF(new coneVelocityF(4.f, 1.f, up, 1.0))
+     ->setParticleLifetimeF(new lifetimeNormalF(1.5, 0.1))
+     ->setOutputRate(500);
+    ParticleManager::get()->addEmitter(e);
+
     // Right emitter
     // black hole
     up = glm::vec3(0, 0, 1);

@@ -57,7 +57,7 @@ protected:
     const float a_;
 };
 
-// Assumes that locations are on a circle around epos. Givens them a velocity
+// Assumes that locations are on a circle around epos. Gives them a velocity
 // pointing "up" and away from the center
 struct coneVelocityF : public velocityF
 {
@@ -105,6 +105,18 @@ struct circleLocationF : public locationF
         r_(radius), upvec_(glm::normalize(up))
     { }
 
+    virtual glm::vec3 operator()(const glm::vec3 &epos);
+
+protected:
+    // Repeated because eventually locationF will be just an interface
+    float r_;
+    glm::vec3 upvec_;
+};
+
+// Creates particles on the interior a circle, with radius and orientation
+struct circleInteriorLocationF : public circleLocationF
+{
+    circleInteriorLocationF(float radius, const glm::vec3 &up);
     virtual glm::vec3 operator()(const glm::vec3 &epos);
 
 protected:

@@ -24,6 +24,11 @@ float randomFloat(float min, float max)
 }
 
 
+float frand() 
+{
+    return static_cast <float>(rand()) / RAND_MAX;
+}
+
 void test_random() {
     float s1 = 1;
     float mu = 7;

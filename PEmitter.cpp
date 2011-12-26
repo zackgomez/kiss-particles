@@ -51,9 +51,40 @@ glm::vec3 circleTangentVelocityF::operator() (const glm::vec3 &epos, const glm::
     return velmag * tandir;
 }
 
+/////////////////////
+// LOCATION FUNCTIONS
+
 glm::vec3 locationF::operator() (const glm::vec3 &epos)
 {
     return pointOnSphere(r_, epos);
+}
+
+circleInteriorLocationF::circleInteriorLocationF(float radius, const glm::vec3 &up) :
+        circleLocationF(radius, up), r_(radius), upvec_(glm::normalize(up)) 
+    { }
+
+// Copypasta (taken from circleLocationF)
+// This function tries to pick a random point inside the circle, as opposed 
+// to just the edges. Return statement is the only different line. 
+glm::vec3 circleInteriorLocationF::operator() (const glm::vec3 &epos)
+{
+
+
+    glm::vec4 orthvec = glm::vec4(upvec_.y,
+            -1 + upvec_.y * upvec_.y * 1 / (1 + upvec_.x),
+            0  + upvec_.y * upvec_.z * 1 / (1 + upvec_.x),
+            1);
+
+    float angle_deg = randomFloat(0, 360);
+
+    glm::mat4 rotmat = glm::rotate(glm::mat4(1.f), angle_deg,
+            upvec_);
+
+    glm::vec4 homodir = rotmat * orthvec;
+    homodir /= homodir.w;
+    glm::vec3 dir(homodir);
+
+    return epos + dir * (frand() * r_);
 }
 
 glm::vec3 circleLocationF::operator() (const glm::vec3 &epos)
