@@ -96,7 +96,7 @@ void ptest(void)
      ->setParticleLocationF(new circleLocationF(radius, up))
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
-     ->setOutputRate(500)
+     ->setOutputRate(2500)
      ->setParticleColorF(new discreteColorF(tornadoc))
      ->setOutputGroup("tornado2");
     ParticleManager::get()->addEmitter(e);

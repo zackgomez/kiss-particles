@@ -1,6 +1,7 @@
 #include "PAction.h"
 #include <iostream>
 #include "utils.h"
+#include <cstdio>
 #include "PEmitter.h"
 
 PERandomF::PERandomF(float howRandom) : sigma_(howRandom) { }
@@ -151,7 +152,10 @@ void PPlaneBounceF::reflectParticleVelocity(Particle &p)
     float magnitude = glm::length(p.vel);
     glm::vec3 dn = normal_ - glm::normalize(p.vel);
     // reflected vector
-    p.vel = magnitude * glm::vec3(0,1,0);//(normal_ - dn);
-    p.vel = magnitude * (normal_ - glm::normalize(p.vel));
+
+    glm::vec3 oldvel = p.vel;
+    p.vel = magnitude * glm::normalize((normal_ - glm::normalize(p.vel)));
+    printf("v_old: (%f, %f, %f) v_new: (%f, %f, %f)\n", oldvel.x, oldvel.y, oldvel.z,
+        p.vel.x, p.vel.y, p.vel.z);
 }
 
