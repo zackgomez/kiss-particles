@@ -77,7 +77,7 @@ void ptest(void)
      ->setParticleLocationF(new circleLocationF(radius, up))
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
-     ->setOutputRate(2500)
+     ->setOutputRate(500)
      ->setParticleColorF(new discreteColorF(tornadoc))
      ->setOutputGroup("tornado");
     ParticleManager::get()->addEmitter(e);
@@ -96,7 +96,7 @@ void ptest(void)
      ->setParticleLocationF(new circleLocationF(radius, up))
      ->setParticleVelocityF(new circleTangentVelocityF(4.f, 0.f, up))
      ->setParticleLifetimeF(new lifetimeNormalF(1.4, 0.4))
-     ->setOutputRate(2500)
+     ->setOutputRate(500)
      ->setParticleColorF(new discreteColorF(tornadoc))
      ->setOutputGroup("tornado2");
     ParticleManager::get()->addEmitter(e);
@@ -171,6 +171,7 @@ void ptest(void)
         ->setParticleVelocityF(new circleTangentVelocityF(0.f, 0.f, glm::vec3(0, 1, 0)))
         ->setParticleLifetimeF(new lifetimeF(5.f))
         ->setLocation(glm::vec3(-10, -10, 0))
+        ->setOutputRate(250)
         ->setOutputGroup("gravity"); 
 
     //pg_gravity->addAction(new GravityActionF(55));
