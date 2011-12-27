@@ -155,6 +155,7 @@ void PPlaneBounceF::reflectParticleVelocity(Particle &p)
 
     glm::vec3 oldvel = p.vel;
     p.vel = magnitude * glm::normalize((normal_ - glm::normalize(p.vel)));
+    p.vel = magnitude *  glm::reflect(-glm::normalize(p.vel), normal_);
     printf("v_old: (%f, %f, %f) v_new: (%f, %f, %f)\n", oldvel.x, oldvel.y, oldvel.z,
         p.vel.x, p.vel.y, p.vel.z);
 }
