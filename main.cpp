@@ -56,14 +56,14 @@ void ptest(void)
     e->setLocation(left_loc)
      ->setParticleLocationF(new locationF(2.f))
      ->setParticleVelocityF(new velocityF(5.f, 20.f, 2.f))
-     ->setParticleLifetimeF(new lifetimeNormalF(0.5, 0.1))
-     ->setOutputRate(150)
+     ->setParticleLifetimeF(new lifetimeNormalF(1.0, 0.1))
+     ->setOutputRate(550)
      ->setOutputGroup("bounce");
     ParticleManager::get()->addEmitter(e);
     bounce_group->addAction(
-        new PPlaneBounceF(left_loc - glm::vec3(0,1,0), 
-                          glm::vec3(0,1,0), 1)); 
-    bounce_group->addAction(new ConstForceF(55, glm::vec3(0, -1, 0)));
+        new PPlaneBounceF(left_loc - glm::vec3(0,3,0), 
+                          glm::vec3(0,1,0), .85)); 
+    bounce_group->addAction(new ConstForceF(40, glm::vec3(0, -1, 0)));
 
     // center emitter
     // tornado hazard
