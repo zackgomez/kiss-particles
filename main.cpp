@@ -202,10 +202,11 @@ void timerCallback (int value)
     glutPostRedisplay();
     glutTimerFunc(msecs, timerCallback, value);
 }
-    void
-showMessage(GLfloat x, GLfloat y, GLfloat z, char *message)
+
+void showMessage(GLfloat x, GLfloat y, GLfloat z, char *message)
 {
     glPushMatrix();
+    glColor3f(1.0f, 1.0f, 1.0f);
     glTranslatef(x, y, z);
     glScalef(.02, .02, .02);
     while (*message) {
@@ -214,12 +215,9 @@ showMessage(GLfloat x, GLfloat y, GLfloat z, char *message)
     }
     glPopMatrix();
 }
-void redraw(void)
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Apply the camera transformation.
-    ui->ApplyViewingTransformation();
+void displayParticleCount(void)
+{
     char buffer [50];
     static int cnt = 0;
     cnt++;
@@ -227,6 +225,15 @@ void redraw(void)
     if (!(cnt % 100)) np = ParticleManager::get()->numParticles();
     sprintf (buffer, "particles: %d", np); 
     showMessage(-15, 15, 0, buffer);
+}
+
+void redraw(void)
+{
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Apply the camera transformation.
+    ui->ApplyViewingTransformation();
+    displayParticleCount();
     ParticleManager::get()->render(msecs * 0.001f);
     glutSwapBuffers();
 }
