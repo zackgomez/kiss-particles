@@ -4,6 +4,7 @@
 #include "PEmitter.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstdlib>
+#include <sys/time.h>
  
 ParticleManager::ParticleManager()
 {
@@ -42,6 +43,9 @@ int ParticleManager::numParticles(void)
 //  - those that render particles
 void ParticleManager::render(float dt)
 {
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    int start_usec = tv.tv_usec;
     /*
     std::cout << "Rendering " << emitters_.size() << " emitters and "
         << groups_.size() << " groups\n";
@@ -66,15 +70,32 @@ void ParticleManager::render(float dt)
             eit = emitters_.erase(eit);
         }
     }
+
+    gettimeofday(&tv, NULL);
+    int creation_usec = tv.tv_usec - start_usec;
+
  
     // finally draw existing particles
     std::map<std::string, PGroup*>::iterator pit;
     for (pit = groups_.begin(); pit != groups_.end(); pit++) 
     {
-        //std::cout << "attempting to render group:" << pit->second << std::endl;
         pit->second->update(dt);
+    }
+    gettimeofday(&tv, NULL);
+    int update_usec = tv.tv_usec - start_usec - creation_usec;
+
+    for (pit = groups_.begin(); pit != groups_.end(); pit++) 
+    {
         pit->second->render();
     }
+    gettimeofday(&tv, NULL);
+    int render_usec = tv.tv_usec - start_usec - creation_usec - update_usec;
+
+    gettimeofday(&tv, NULL);
+    int total_usec = tv.tv_usec - start_usec;
+
+    std::cout << "ParticleManager::render() || total: " << total_usec << "us creation: " << creation_usec
+        << "us update: " << update_usec << "us render: " << render_usec << "us\n";
 }
 
 ParticleManager* ParticleManager::get()
