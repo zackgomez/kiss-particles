@@ -203,10 +203,10 @@ private:
     std::list<PEmitterActionF *> eactions_;
     std::string outputGroup_;   
     float timeRemaining_;
+    float particlesToEmit_;
 
 
-    friend class ParticleManager;
     friend class PERandomF;
+    friend class ParticleManager;
 };
-
 

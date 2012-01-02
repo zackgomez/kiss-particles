@@ -150,10 +150,12 @@ void PPlaneBounceF::operator() (std::list<Particle*> &ps, float dt)
 void PPlaneBounceF::reflectParticleVelocity(Particle &p)
 {
     float magnitude = glm::length(p.vel);
+    /*
     glm::vec3 dn = normal_ - glm::normalize(p.vel);
+    glm::vec3 oldvel = p.vel;
+    */
     // reflected vector
 
-    glm::vec3 oldvel = p.vel;
     p.vel = magnitude * glm::normalize((normal_ - glm::normalize(p.vel)));
     p.vel = elasticity_ * magnitude *  glm::reflect(-glm::normalize(p.vel), normal_);
 }

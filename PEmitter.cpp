@@ -132,7 +132,8 @@ Emitter::Emitter() :
     rate_(400.f),
     size_(1.f),
     outputGroup_("default"),
-    timeRemaining_(HUGE_VAL)
+    timeRemaining_(HUGE_VAL),
+    particlesToEmit_(0.f)
 {
 }
 
@@ -155,7 +156,6 @@ void Emitter::addEmitterAction(PEmitterActionF *eaf)
 
 void Emitter::emit(std::list<Particle*>& particles, float dt) 
 {
-
     // first apply emitter actions
     std::list<PEmitterActionF*>::iterator ait;
     for (ait = eactions_.begin(); ait != eactions_.end(); ait++)
@@ -166,31 +166,23 @@ void Emitter::emit(std::list<Particle*>& particles, float dt)
     // first decrease time remaining _on the emitter_.
     timeRemaining_ -= dt;
 
-    int numNewParts = rate_ * dt;
+    particlesToEmit_ += rate_ * dt;
+
+    int numNewParts = static_cast<int>(particlesToEmit_);
     for (int j = 0; j < numNewParts; j++)     
     {
         Particle *p = new Particle();
-        p->loc = (*location_func)(loc_);
+        // use the callback functions to determine particle characteristics
         p->t = (*lifetime_func)();
-        // Particle's velocity is the normal at that point
-        // scaled by emitter's velocity value and given some
-        // random nonsense
+        p->loc = (*location_func)(loc_);
         p->vel = (*velocity_func)(p->loc, loc_);
         p->size = glm::vec3(size_);
         p->color = (*color_func)();
 
-        /*
-        glm::vec4 colordelta = glm::vec4(
-                normalRandom(1.f, colorvar_.r),
-                normalRandom(1.f, colorvar_.g),
-                normalRandom(1.f, colorvar_.b),
-                1.f);
-        colordelta = glm::max(colordelta, 0.f);
-        p->color = glm::clamp(color_ * colordelta, 0.f, 1.f);
-        p->color *= normalRandom(colorbright_, colorbrightvar_);
-        */
         particles.push_back(p);
     }
+
+    particlesToEmit_ -= numNewParts;
 }
 
 Emitter* Emitter::setOutputGroup(const std::string &s)
