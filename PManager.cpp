@@ -43,9 +43,11 @@ int ParticleManager::numParticles(void)
 //  - those that render particles
 void ParticleManager::render(float dt)
 {
+#ifdef KISS_PARTICLES_DEBUG
     struct timeval tv;
     gettimeofday(&tv, NULL);
     int start_usec = tv.tv_usec;
+#endif
     /*
     std::cout << "Rendering " << emitters_.size() << " emitters and "
         << groups_.size() << " groups\n";
@@ -71,8 +73,10 @@ void ParticleManager::render(float dt)
         }
     }
 
+#ifdef KISS_PARTICLES_DEBUG
     gettimeofday(&tv, NULL);
     int creation_usec = tv.tv_usec - start_usec;
+#endif
 
  
     // finally draw existing particles
@@ -81,13 +85,16 @@ void ParticleManager::render(float dt)
     {
         pit->second->update(dt);
     }
+#ifdef KISS_PARTICLES_DEBUG
     gettimeofday(&tv, NULL);
     int update_usec = tv.tv_usec - start_usec - creation_usec;
+#endif
 
     for (pit = groups_.begin(); pit != groups_.end(); pit++) 
     {
         pit->second->render();
     }
+#ifdef KISS_PARTICLES_DEBUG
     gettimeofday(&tv, NULL);
     int render_usec = tv.tv_usec - start_usec - creation_usec - update_usec;
 
@@ -96,6 +103,7 @@ void ParticleManager::render(float dt)
 
     std::cout << "ParticleManager::render() || total: " << total_usec << "us creation: " << creation_usec
         << "us update: " << update_usec << "us render: " << render_usec << "us\n";
+#endif
 }
 
 ParticleManager* ParticleManager::get()
