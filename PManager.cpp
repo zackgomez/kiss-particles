@@ -35,23 +35,27 @@ int ParticleManager::numParticles(void)
     return cnt;
 }
 
-    
-
-// A combined update/render call...
-// Two types of operations occur here:
-//  - those that update emitters and particles
-//  - those that render particles
-void ParticleManager::render(float dt)
+void ParticleManager::startUpdate(float dt)
 {
+    update_dt_ = dt;
+
+    // Kick off each PGroup update
+    std::map<std::string, PGroup*>::iterator pit;
+    for (pit = groups_.begin(); pit != groups_.end(); pit++) 
+    {
+        pit->second->startUpdate(dt);
+    }
+}
+
+void ParticleManager::update()
+{
+    float dt = update_dt_;
 #ifdef KISS_PARTICLES_DEBUG
     struct timeval tv;
     gettimeofday(&tv, NULL);
     int start_usec = tv.tv_usec;
 #endif
-    /*
-    std::cout << "Rendering " << emitters_.size() << " emitters and "
-        << groups_.size() << " groups\n";
-        */
+
     // First create new particles.
     std::list<Emitter*>::iterator eit;
     for (eit = emitters_.begin(); eit != emitters_.end(); eit++)
@@ -77,32 +81,49 @@ void ParticleManager::render(float dt)
     gettimeofday(&tv, NULL);
     int creation_usec = tv.tv_usec - start_usec;
 #endif
-
  
-    // finally draw existing particles
+    // Update and move particles
     std::map<std::string, PGroup*>::iterator pit;
     for (pit = groups_.begin(); pit != groups_.end(); pit++) 
     {
-        pit->second->update(dt);
+        pit->second->update();
     }
 #ifdef KISS_PARTICLES_DEBUG
     gettimeofday(&tv, NULL);
     int update_usec = tv.tv_usec - start_usec - creation_usec;
 #endif
 
+#ifdef KISS_PARTICLES_DEBUG
+    std::cout << "ParticleManager::update() - creation: " << creation_usec
+        << "us update: " << update_usec << "us\n";
+#endif
+}
+
+    
+
+// A combined update/render call...
+// Two types of operations occur here:
+//  - those that update emitters and particles
+//  - those that render particles
+void ParticleManager::render(float dt)
+{
+#ifdef KISS_PARTICLES_DEBUG
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    int start_usec = tv.tv_usec;
+#endif
+
+    // draw existing particles
+    std::map<std::string, PGroup*>::iterator pit;
     for (pit = groups_.begin(); pit != groups_.end(); pit++) 
     {
         pit->second->render();
     }
 #ifdef KISS_PARTICLES_DEBUG
     gettimeofday(&tv, NULL);
-    int render_usec = tv.tv_usec - start_usec - creation_usec - update_usec;
+    int render_usec = tv.tv_usec - start_usec;
 
-    gettimeofday(&tv, NULL);
-    int total_usec = tv.tv_usec - start_usec;
-
-    std::cout << "ParticleManager::render() || total: " << total_usec << "us creation: " << creation_usec
-        << "us update: " << update_usec << "us render: " << render_usec << "us\n";
+    std::cout << "ParticleManager::render() - " << render_usec << "us\n";
 #endif
 }
 

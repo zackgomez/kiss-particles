@@ -4,19 +4,11 @@
  
 void PGroup::render(void) 
 {
-    //std::cout << "PGroup::render" << std::endl;
     std::list<Particle *>::iterator pit;
     // loop over each particle and render
     for (pit = particles_.begin(); pit != particles_.end(); pit++)
     {
-        //std::cout << "rendering particle: " << *pit << std::endl;
         (*pit)->render();
-        //dprint((*pit)->t);
-        if ((*pit)->t < 0) {
-            //std::cout << "deleting particle: " << *pit << std::endl;
-            delete *pit;
-            pit = particles_.erase(pit);
-        }
     }
     
 }
@@ -32,8 +24,15 @@ void PGroup::addAction(PActionF* pa)
     actions_.push_back(pa);
 }
 
-void PGroup::update(float dt)
+void PGroup::startUpdate(float dt)
 {
+    update_dt_ = dt;
+}
+
+void PGroup::update()
+{
+    float dt = update_dt_;
+
     // apply any actions we have.
     std::list<PActionF*>::iterator pfit;
     for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
@@ -41,9 +40,17 @@ void PGroup::update(float dt)
         (**pfit)(particles_, dt);
     }
 
+    // Run each particle's update
     std::list<Particle *>::iterator pit;
     for (pit = particles_.begin(); pit != particles_.end(); pit++) {
-        (*pit)->update(dt);
+        // first check for removal
+        if ((*pit)->t < 0) {
+            delete *pit;
+            pit = particles_.erase(pit);
+        }
+        else
+            // now update
+            (*pit)->update(dt);
     }
 }
     

@@ -18,6 +18,11 @@ public:
     // Get() access to the singleton instance
     static ParticleManager* get();
 
+    // kicks off an update, call early, does not block
+    void startUpdate(float dt);
+    // blocks until update finishes.
+    void update();
+
     void render(float dt);
     Emitter* newEmitter();
     // 
@@ -38,6 +43,8 @@ private:
 
     std::map<std::string, PGroup*> groups_;
     std::list<Emitter*> emitters_;
+
+    float update_dt_;
 
 };
 

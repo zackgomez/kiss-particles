@@ -232,11 +232,17 @@ void displayParticleCount(void)
 
 void redraw(void)
 {
+    // Update first
+    ParticleManager::get()->startUpdate(msecs * 0.001f);
+    ParticleManager::get()->update();
+
+    // Now render
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Apply the camera transformation.
     ui->ApplyViewingTransformation();
     displayParticleCount();
+
     ParticleManager::get()->render(msecs * 0.001f);
     glutSwapBuffers();
 }
