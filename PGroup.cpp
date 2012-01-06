@@ -42,15 +42,18 @@ void PGroup::update()
 
     // Run each particle's update
     std::list<Particle *>::iterator pit;
-    for (pit = particles_.begin(); pit != particles_.end(); pit++) {
+    for (pit = particles_.begin(); pit != particles_.end(); ) {
         // first check for removal
         if ((*pit)->t < 0) {
             delete *pit;
             pit = particles_.erase(pit);
         }
         else
+		{
             // now update
             (*pit)->update(dt);
+			pit++;
+		}
     }
 }
     

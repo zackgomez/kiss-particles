@@ -4,7 +4,9 @@
 #include "PEmitter.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstdlib>
+#ifdef KISS_PARTICLES_DEBUG
 #include <sys/time.h>
+#endif
  
 ParticleManager::ParticleManager()
 {
@@ -58,7 +60,7 @@ void ParticleManager::update()
 
     // First create new particles.
     std::list<Emitter*>::iterator eit;
-    for (eit = emitters_.begin(); eit != emitters_.end(); eit++)
+    for (eit = emitters_.begin(); eit != emitters_.end(); )
     {
         std::string og = (*eit)->outputGroup_;
         //DPRINT(groups_.find(og)->second);
@@ -75,6 +77,8 @@ void ParticleManager::update()
             delete *eit;
             eit = emitters_.erase(eit);
         }
+		else
+			eit++;
     }
 
 #ifdef KISS_PARTICLES_DEBUG
