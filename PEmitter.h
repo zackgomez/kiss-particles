@@ -178,7 +178,7 @@ public:
     bool isDone() const;
     // The update function. Spew some new particles, given that dt seconds
     // have elapsed.
-    void emit(std::list<Particle*>&, float dt);
+    void emit(std::vector<Particle*>&, float dt);
 
     void addEmitterAction(PEmitterActionF *);
 

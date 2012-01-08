@@ -4,13 +4,14 @@
  
 void PGroup::render(void) 
 {
-    std::list<Particle *>::iterator pit;
     // loop over each particle and render
-    for (pit = particles_.begin(); pit != particles_.end(); pit++)
-    {
-        (*pit)->render();
-    }
-    
+    for (size_t i = 0; i < particles_.size(); i++)
+        particles_[i]->render();
+}
+
+PGroup::~PGroup()
+{
+    reset();
 }
 
 int PGroup::numParticles(void)
@@ -40,29 +41,29 @@ void PGroup::update()
         (**pfit)(particles_, dt);
     }
 
-    // Run each particle's update
-    std::list<Particle *>::iterator pit;
-    for (pit = particles_.begin(); pit != particles_.end(); ) {
-        // first check for removal
-        if ((*pit)->t < 0) {
-            delete *pit;
-            pit = particles_.erase(pit);
+    for (size_t i = 0; i < particles_.size(); )
+    {
+        Particle *part = particles_[i];
+        if (part->t < 0)
+        {
+            delete part;
+            // Use swap trick to quickly remove element
+            std::swap(particles_[i], particles_.back());
+            particles_.resize(particles_.size() - 1);
+            // update this index again, so no increment on i
         }
         else
-		{
-            // now update
-            (*pit)->update(dt);
-			pit++;
-		}
+        {
+            part->update(dt);
+            i++;
+        }
     }
 }
     
 
 void PGroup::reset(void)
 {
-    std::list<Particle*>::iterator pit;
-    for (pit = particles_.begin(); pit != particles_.end(); pit++) {
-        delete *pit;
-    }
+    for (size_t i = 0; i < particles_.size(); i++)
+        delete particles_[i];
     particles_.clear();
 }

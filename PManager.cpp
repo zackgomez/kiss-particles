@@ -162,5 +162,11 @@ void ParticleManager::reset()
         delete *eit;
     emitters_.clear();
 
-    // Tell each particle group to reset.
+    // Remove each pgroup and readd default
+    std::map<std::string, PGroup*>::iterator git;
+    for (git = groups_.begin(); git != groups_.end(); git++)
+        delete git->second;
+    groups_.clear();
+
+    groups_["default"] = new PGroup();   
 }

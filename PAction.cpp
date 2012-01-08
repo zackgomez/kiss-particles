@@ -14,7 +14,7 @@ void PERandomF::operator() (Emitter* em, float dt)
     em->loc_ += dir * dt * sigma_; 
 
 }
-void DefaultActionF::operator()(std::list<Particle*>&, float dt)
+void DefaultActionF::operator()(std::vector<Particle*>&, float dt)
 {
     return;
 }
@@ -23,14 +23,10 @@ ConstForceF::ConstForceF(float g, const glm::vec3 &dir) :
     g_(g), dir_(glm::normalize(dir))
 { }
 
-void ConstForceF::operator() (std::list<Particle*> &parts, float dt)
+void ConstForceF::operator() (std::vector<Particle*> &parts, float dt)
 {
-    std::list<Particle*>::iterator pit;
-    for (pit = parts.begin(); pit != parts.end(); pit++)
-    {
-        (*pit)->vel += dir_ * g_ * dt;
-    } 
-
+    for (size_t i = 0; i < parts.size(); i++)
+        parts[i]->vel += dir_ * g_ * dt;
 }
 
 CentripetalForceF::CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up,
@@ -40,12 +36,11 @@ CentripetalForceF::CentripetalForceF(const glm::vec3 &center, const glm::vec3 &u
     radius_(radius)
 { }
 
-void CentripetalForceF::operator() (std::list<Particle*> &parts, float dt)
+void CentripetalForceF::operator() (std::vector<Particle*> &parts, float dt)
 {
-    std::list<Particle*>::iterator pit;
-    for (pit = parts.begin(); pit != parts.end(); pit++)
+    for (size_t i = 0; i < parts.size(); i++)
     {
-        Particle *p = *pit;
+        Particle *p = parts[i];
 
         // First we need to get the direction from the center to the point,
         // use project for this
@@ -80,16 +75,15 @@ PPointAttractorF::PPointAttractorF(const glm::vec3 &pos, float magnitude) :
 { }
 
 
-void PPointAttractorF::operator() (std::list<Particle*> &parts, float dt)
+void PPointAttractorF::operator() (std::vector<Particle*> &parts, float dt)
 {
-
-    std::list<Particle*>::iterator pit;
-    for (pit = parts.begin(); pit != parts.end(); pit++)
+    for (size_t i = 0; i < parts.size(); i++)
     {
-        float r = glm::length((*pit)->loc - pos_);
-        glm::vec3 rhat = glm::normalize((*pit)->loc - pos_);
+        Particle *part = parts[i];
+        float r = glm::length(part->loc - pos_);
+        glm::vec3 rhat = glm::normalize(part->loc - pos_);
         glm::vec3 theforce = rhat * glm::vec3(g_ / (pow(r, 2.0f))); 
-       (*pit)->vel -= theforce * dt; 
+        part->vel -= theforce * dt; 
     } 
 }
 
@@ -97,33 +91,28 @@ PPointSinkF::PPointSinkF(const glm::vec3 &location, float tolerance) :
     pos_(location), tol_(tolerance)
 { }
 
-void PPointSinkF::operator() (std::list<Particle*> &parts, float dt)
+void PPointSinkF::operator() (std::vector<Particle*> &parts, float dt)
 {
-    std::list<Particle*>::iterator pit;
-    for (pit = parts.begin(); pit != parts.end(); pit++)
+    for (size_t i = 0; i < parts.size(); i++)
     {
-        if ( glm::length((*pit)->loc - pos_) < tol_)
+        Particle *part = parts[i];
+        if (glm::length(part->loc - pos_) < tol_)
         {
-            delete *pit;
-            pit = parts.erase(pit);
+            part->t = -HUGE_VAL;
         }
     }
 }
 
 
 PPlaneSinkF::PPlaneSinkF(const glm::vec3 &pt, const glm::vec3 &normal) : pt_(pt), normal_(normal) { }
-void PPlaneSinkF::operator() (std::list<Particle*> &parts, float dt)
+void PPlaneSinkF::operator() (std::vector<Particle*> &parts, float dt)
 {
-    std::list<Particle*>::iterator pit;
-    for (pit = parts.begin(); pit != parts.end(); pit++)
+    for (size_t i = 0; i < parts.size(); i++)
     {
-        Particle *p = *pit;
+        Particle *p = parts[i];
         // check to see if it's on the same side as the plane
         if (glm::dot(normal_, p->loc - pt_) < 0.f)
-        {
-            delete *pit;
-            pit = parts.erase(pit);
-        }
+            p->t = -HUGE_VAL;
     }
 }
 
@@ -133,30 +122,30 @@ PPlaneBounceF::PPlaneBounceF(const glm::vec3 & pt,
     point_(pt), normal_(normal_vec), elasticity_(elast) { }
 
 
-void PPlaneBounceF::operator() (std::list<Particle*> &ps, float dt)
+void PPlaneBounceF::operator() (std::vector<Particle*> &parts, float dt)
 {
     // for each particle, check if it's over our plane
-    std::list<Particle*>::iterator pit;
-    for (pit = ps.begin(); pit != ps.end(); pit++)
+    for (size_t i = 0; i < parts.size(); i++)
     {
-        if (glm::dot((*pit)->loc - point_, normal_) < 0.0f)
+        Particle *p = parts[i];
+        if (glm::dot(p->loc - point_, normal_) < 0.0f)
         {
             // particle in question is 'behind' the normal one
-            reflectParticleVelocity(**pit);
+            reflectParticleVelocity(p);
         }
     }
 }
 
-void PPlaneBounceF::reflectParticleVelocity(Particle &p)
+void PPlaneBounceF::reflectParticleVelocity(Particle *p)
 {
-    float magnitude = glm::length(p.vel);
+    float magnitude = glm::length(p->vel);
     /*
     glm::vec3 dn = normal_ - glm::normalize(p.vel);
     glm::vec3 oldvel = p.vel;
     */
     // reflected vector
 
-    p.vel = magnitude * glm::normalize((normal_ - glm::normalize(p.vel)));
-    p.vel = elasticity_ * magnitude *  glm::reflect(-glm::normalize(p.vel), normal_);
+    p->vel = magnitude * glm::normalize((normal_ - glm::normalize(p->vel)));
+    p->vel = elasticity_ * magnitude *  glm::reflect(-glm::normalize(p->vel), normal_);
 }
 

@@ -154,7 +154,7 @@ void Emitter::addEmitterAction(PEmitterActionF *eaf)
     eactions_.push_back(eaf);
 }
 
-void Emitter::emit(std::list<Particle*>& particles, float dt) 
+void Emitter::emit(std::vector<Particle*>& particles, float dt) 
 {
     // first apply emitter actions
     std::list<PEmitterActionF*>::iterator ait;

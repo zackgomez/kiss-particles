@@ -15,6 +15,8 @@
 class ParticleManager 
 {
 public:
+    ~ParticleManager();
+
     // Get() access to the singleton instance
     static ParticleManager* get();
 
@@ -39,7 +41,6 @@ public:
 
 private:
     ParticleManager();
-    ~ParticleManager();
 
     std::map<std::string, PGroup*> groups_;
     std::list<Emitter*> emitters_;

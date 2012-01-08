@@ -6,6 +6,8 @@
 class PGroup 
 {
 public:
+    ~PGroup();
+
     void render();
     void reset();
 
@@ -18,7 +20,7 @@ public:
     
     int numParticles(void);
 private:
-    std::list<Particle*> particles_;
+    std::vector<Particle*> particles_;
     std::list<PActionF*> actions_;
 
     float update_dt_;
