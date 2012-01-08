@@ -98,8 +98,8 @@ void ParticleManager::update()
 #endif
 
 #ifdef KISS_PARTICLES_DEBUG
-    std::cout << "ParticleManager::update() - creation: " << creation_usec
-        << "us update: " << update_usec << "us\n";
+    std::cout << "creation(us): " << creation_usec << '\n';
+    std::cout << "update(us):   " << update_usec << '\n';
 #endif
 }
 
@@ -127,7 +127,7 @@ void ParticleManager::render(float dt)
     gettimeofday(&tv, NULL);
     int render_usec = tv.tv_usec - start_usec;
 
-    std::cout << "ParticleManager::render() - " << render_usec << "us\n";
+    std::cout << "render(us):   " << render_usec << '\n';
 #endif
 }
 
