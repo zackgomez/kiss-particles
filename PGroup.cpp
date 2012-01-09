@@ -1,12 +1,22 @@
 #include "PGroup.h"
 #include <iostream>
 #include "dprint.h"
- 
+
 void PGroup::render(void) 
 {
     // loop over each particle and render
     for (size_t i = 0; i < particles_.size(); i++)
         particles_[i]->render();
+
+    std::vector<particleData> buf(particles_.size());
+
+    for (size_t i = 0; i < particles_.size(); i++)
+    {
+        buf[i].pos = particles_[i]->loc;
+        buf[i].color = particles_[i]->color;
+    }
+
+    renderParticles(buf);
 }
 
 PGroup::~PGroup()
@@ -49,7 +59,7 @@ void PGroup::update()
             delete part;
             // Use swap trick to quickly remove element
             std::swap(particles_[i], particles_.back());
-            particles_.resize(particles_.size() - 1);
+            particles_.pop_back();
             // update this index again, so no increment on i
         }
         else

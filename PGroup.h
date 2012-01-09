@@ -27,3 +27,12 @@ private:
 
     friend class ParticleManager;
 };
+
+
+struct particleData
+{
+    glm::vec3 pos;
+    glm::vec4 color;
+};
+ 
+void renderParticles(const std::vector<particleData> &data);

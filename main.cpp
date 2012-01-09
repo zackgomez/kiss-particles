@@ -1,3 +1,4 @@
+#include <GL/glew.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -283,6 +284,7 @@ void keyboard(GLubyte key, GLint x, GLint y)
 
 int main(int argc, char **argv)
 {
+    glewInit();
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
 
@@ -318,5 +320,21 @@ void renderParticle(const glm::vec3 &loc,
     glBegin(GL_POINTS);
     glVertex3fv(glm::value_ptr(loc));
     glEnd();
+}
+
+GLuint make_buffer(GLenum target, const void *buffer_data, GLsizei buffer_size)
+{
+    GLuint buffer;
+    glGenBuffers(1, &buffer);
+    glBindBuffer(target, buffer);
+    glBufferData(target, buffer_size, buffer_data, GL_STATIC_DRAW);
+    return buffer;
+}
+
+ 
+
+void renderParticles(const std::vector<particleData> &data)
+{
+    GLuint buf = make_buffer(GL_ARRAY_BUFFER, &data[0], data.size() * sizeof(particleData));
 }
 
