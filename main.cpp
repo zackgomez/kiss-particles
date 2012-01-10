@@ -11,6 +11,8 @@
 
 int windowWidth = 800, windowHeight = 600;
 
+GLuint partbuf = 0;
+
 // Peter's mystical ui controller for arcball transformation and stuff
 static UIState *ui;
 
@@ -313,6 +315,8 @@ int main(int argc, char **argv)
     ui->Far() = 1000;
     ui->CTrans() = glm::vec3(0, 0, -40);
 
+    glGenBuffers(1, &partbuf);
+
     glutMainLoop();
     return 0;             /* ANSI C requires main to return int. */
 }
@@ -330,9 +334,7 @@ void renderParticle(const glm::vec3 &loc,
 
 void renderParticles(const std::vector<particleData> &data)
 {
-    GLuint buffer;
-    glGenBuffers(1, &buffer);
-    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBindBuffer(GL_ARRAY_BUFFER, partbuf);
     glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(particleData), &data.front(), GL_STREAM_DRAW);
 
     glMatrixMode(GL_MODELVIEW);
@@ -346,6 +348,5 @@ void renderParticles(const std::vector<particleData> &data)
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glDeleteBuffersARB(1, &buffer);
 }
 
