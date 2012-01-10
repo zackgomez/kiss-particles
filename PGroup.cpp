@@ -5,8 +5,10 @@
 void PGroup::render(void) 
 {
     // loop over each particle and render
+    /*
     for (size_t i = 0; i < particles_.size(); i++)
         particles_[i]->render();
+        */
 
     std::vector<particleData> buf(particles_.size());
 

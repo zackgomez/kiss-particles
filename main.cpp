@@ -284,12 +284,8 @@ void keyboard(GLubyte key, GLint x, GLint y)
 
 int main(int argc, char **argv)
 {
-    glewInit();
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH | GLUT_MULTISAMPLE);
-
-    setupParticleLoop();
-    ptest();
 
     glutCreateWindow("kiss_particle demo");
     glutDisplayFunc(redraw);
@@ -297,6 +293,16 @@ int main(int argc, char **argv)
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
     glutKeyboardFunc(keyboard);
+
+    GLenum err = glewInit();
+    if (err != GLEW_OK)
+    {
+        std::cerr << "Unable to initialize GLEW: " << glewGetErrorString(err) << '\n';
+        exit(1);
+    }
+
+    setupParticleLoop();
+    ptest();
 
     glEnable(GL_DEPTH_TEST);
 
@@ -322,19 +328,24 @@ void renderParticle(const glm::vec3 &loc,
     glEnd();
 }
 
-GLuint make_buffer(GLenum target, const void *buffer_data, GLsizei buffer_size)
+void renderParticles(const std::vector<particleData> &data)
 {
     GLuint buffer;
     glGenBuffers(1, &buffer);
-    glBindBuffer(target, buffer);
-    glBufferData(target, buffer_size, buffer_data, GL_STATIC_DRAW);
-    return buffer;
-}
+    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(particleData), &data.front(), GL_STREAM_DRAW);
 
- 
+    glMatrixMode(GL_MODELVIEW);
 
-void renderParticles(const std::vector<particleData> &data)
-{
-    GLuint buf = make_buffer(GL_ARRAY_BUFFER, &data[0], data.size() * sizeof(particleData));
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 7*sizeof(float), 0);
+    glColorPointer(4, GL_FLOAT, 7*sizeof(float), (void *)(3 * sizeof(float)));
+    glDrawArrays(GL_POINTS, 0, data.size());
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glDeleteBuffersARB(1, &buffer);
 }
 
