@@ -1,4 +1,4 @@
-CXXFLAGS=-g -O2 -Wall -Iglm-0.9.2.7 -fpermissive -Wreorder -DKISS_PARTICLES_DEBUG
+CXXFLAGS=-g -O0 -Wall -Iglm-0.9.2.7 -fpermissive -Wreorder -DKISS_PARTICLES_DEBUG
 LDFLAGS= -lGL -lglut -lGLU -lGLEW
 
 all: kiss_particles libkiss_particles.a
