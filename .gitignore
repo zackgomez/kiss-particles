@@ -1,0 +1,3 @@
+*.o
+kiss_particles
+libkiss_particles.a
