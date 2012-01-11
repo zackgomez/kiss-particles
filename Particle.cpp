@@ -12,8 +12,3 @@ void Particle::update(float dt)
     loc = loc + vel * dt;
     t -= dt;
 }
-    
-void Particle::render() 
-{
-    renderParticle(loc, size, color);
-}

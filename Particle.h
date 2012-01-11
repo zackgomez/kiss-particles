@@ -1,15 +1,10 @@
 #pragma once
 #include <glm/glm.hpp>
 
-struct Renderable
-{
-    virtual void render() = 0;
-};
-
 //
 // Particle system's basic particle struct.
 //
-struct Particle : virtual public Renderable
+struct Particle
 {
     // Location of the particle, in world space
     glm::vec3 loc;
@@ -24,6 +19,5 @@ struct Particle : virtual public Renderable
 
     // Physics calculations are performed here.
     void update(float dt);
-    virtual void render();
 };
 

@@ -282,6 +282,18 @@ void keyboard(GLubyte key, GLint x, GLint y)
     // Quit on ESC
     if (key == 27)
         exit(0);
+
+    if (key == 'r')
+        ParticleManager::get()->startRecording();
+
+    if (key == 's')
+    {
+        const double *times = ParticleManager::get()->stopRecording();
+        std::cout << "Recorded times:\n"
+            << "creation(us): " << times[0] << '\n'
+            << "update(us):   " << times[1] << '\n'
+            << "render(us):   " << times[2] << '\n';
+    }
 }
 
 int main(int argc, char **argv)
@@ -319,17 +331,6 @@ int main(int argc, char **argv)
 
     glutMainLoop();
     return 0;             /* ANSI C requires main to return int. */
-}
-
-void renderParticle(const glm::vec3 &loc,
-        const glm::vec3 &part_size, const glm::vec4 &part_color)
-{
-    glMatrixMode(GL_MODELVIEW);
-
-    glColor3fv(glm::value_ptr(part_color));
-    glBegin(GL_POINTS);
-    glVertex3fv(glm::value_ptr(loc));
-    glEnd();
 }
 
 void renderParticles(const std::vector<particleData> &data)

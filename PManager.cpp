@@ -95,11 +95,17 @@ void ParticleManager::update()
 #ifdef KISS_PARTICLES_DEBUG
     gettimeofday(&tv, NULL);
     int update_usec = tv.tv_usec - start_usec - creation_usec;
-#endif
+    creation_usec = creation_usec >= 0 ? creation_usec : 1e6 + creation_usec;
+    update_usec = update_usec >= 0 ? update_usec : 1e6 + update_usec;
+    //std::cout << "creation(us): " << creation_usec << '\n';
+    //std::cout << "update(us):   " << update_usec << '\n';
 
-#ifdef KISS_PARTICLES_DEBUG
-    std::cout << "creation(us): " << creation_usec << '\n';
-    std::cout << "update(us):   " << update_usec << '\n';
+    if (recording_)
+    {
+        times_[0] += creation_usec;
+        times_[1] += update_usec;
+        frame_count_++;
+    }
 #endif
 }
 
@@ -114,7 +120,7 @@ void ParticleManager::render(float dt)
 #ifdef KISS_PARTICLES_DEBUG
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    int start_usec = tv.tv_usec;
+    suseconds_t start_usec = tv.tv_usec;
 #endif
 
     // draw existing particles
@@ -125,9 +131,11 @@ void ParticleManager::render(float dt)
     }
 #ifdef KISS_PARTICLES_DEBUG
     gettimeofday(&tv, NULL);
-    int render_usec = tv.tv_usec - start_usec;
-
-    std::cout << "render(us):   " << render_usec << '\n';
+    suseconds_t render_usec = tv.tv_usec - start_usec;
+    render_usec = render_usec >= 0 ? render_usec : 1e6 + render_usec;
+    //std::cout << "render(us):   " << render_usec << '\n';
+    if (recording_)
+        times_[2] += render_usec;
 #endif
 }
 
@@ -144,7 +152,7 @@ Emitter* ParticleManager::newEmitter()
 
 void ParticleManager::addEmitter(Emitter *em)
 {
-    std::cout << "Adding a new emitter: " << em << std::endl;
+    //std::cout << "Adding a new emitter: " << em << std::endl;
     emitters_.push_back(em);
 }
 
@@ -170,3 +178,25 @@ void ParticleManager::reset()
 
     groups_["default"] = new PGroup();   
 }
+
+#ifdef KISS_PARTICLES_DEBUG
+void ParticleManager::startRecording()
+{
+    recording_= true;
+    frame_count_ = 0;
+    times_[0] = 0.f;
+    times_[1] = 0.f;
+    times_[2] = 0.f;
+}
+
+const double* ParticleManager::stopRecording()
+{
+    recording_ = false;
+
+    times_[0] /= frame_count_;
+    times_[1] /= frame_count_;
+    times_[2] /= frame_count_;
+
+    return times_;
+}
+#endif

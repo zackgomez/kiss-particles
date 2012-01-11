@@ -39,6 +39,11 @@ public:
 
     int numParticles(void);
 
+#ifdef KISS_PARTICLES_DEBUG
+    void startRecording();
+    const double* stopRecording();
+#endif
+
 private:
     ParticleManager();
 
@@ -47,5 +52,8 @@ private:
 
     float update_dt_;
 
+    bool recording_;
+    unsigned frame_count_;
+    double times_[3];
 };
 
