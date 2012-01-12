@@ -35,7 +35,8 @@ public:
     // Removes all emitters and particles
     void reset();
 
-    static PGroup* newGroup(const std::string &groupName);
+    PGroup* newGroup(const std::string &groupName);
+    Particle *newParticle(const std::string &groupName);
 
     int numParticles(void);
 

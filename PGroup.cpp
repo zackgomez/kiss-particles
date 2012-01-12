@@ -26,6 +26,14 @@ PGroup::~PGroup()
     reset();
 }
 
+Particle* PGroup::newParticle()
+{
+    // TODO use something more intricate
+    Particle *ret = new Particle();
+    particles_.push_back(ret);
+    return ret;
+}
+
 int PGroup::numParticles(void)
 {
     return particles_.size();

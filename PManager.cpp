@@ -26,6 +26,18 @@ PGroup* ParticleManager::newGroup(const std::string &gname)
     return p;
 }
 
+Particle * ParticleManager::newParticle(const std::string &groupName)
+{
+    if (groups_.find(groupName) == groups_.end())
+    {
+        std::cerr << "FATAL ERROR: unable to find Particle Group `" << groupName << "`\n";
+        assert(false);
+        return NULL;
+    }
+
+    return groups_[groupName]->newParticle();
+}
+
 int ParticleManager::numParticles(void)
 {
     int cnt = 0;
@@ -62,7 +74,7 @@ void ParticleManager::update()
     std::list<Emitter*>::iterator eit;
     for (eit = emitters_.begin(); eit != emitters_.end(); )
     {
-        std::string og = (*eit)->outputGroup_;
+        std::string og = (*eit)->getOutputGroup();
         //DPRINT(groups_.find(og)->second);
         // Freak the fuck out if we can't find the requested group.
         if (!groups_.count(og)) 
@@ -71,7 +83,7 @@ void ParticleManager::update()
             assert(false);
         }
         // Emit into the output particle group
-        (*eit)->emit(groups_.find(og)->second->particles_, dt);
+        (*eit)->emit(dt);
         if ((*eit)->isDone()) 
         {
             delete *eit;
@@ -111,10 +123,6 @@ void ParticleManager::update()
 
     
 
-// A combined update/render call...
-// Two types of operations occur here:
-//  - those that update emitters and particles
-//  - those that render particles
 void ParticleManager::render(float dt)
 {
 #ifdef KISS_PARTICLES_DEBUG

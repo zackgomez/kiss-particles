@@ -5,6 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include "utils.h"
 #include "PAction.h"
+#include "PManager.h"
 
 lifetimeNormalF::lifetimeNormalF(float mu_, float variance) 
     : lifetimeF(mu_), var_(variance)
@@ -154,7 +155,7 @@ void Emitter::addEmitterAction(PEmitterActionF *eaf)
     eactions_.push_back(eaf);
 }
 
-void Emitter::emit(std::vector<Particle*>& particles, float dt) 
+void Emitter::emit(float dt) 
 {
     // first apply emitter actions
     std::list<PEmitterActionF*>::iterator ait;
@@ -171,15 +172,13 @@ void Emitter::emit(std::vector<Particle*>& particles, float dt)
     int numNewParts = static_cast<int>(particlesToEmit_);
     for (int j = 0; j < numNewParts; j++)     
     {
-        Particle *p = new Particle();
+        Particle *p = ParticleManager::get()->newParticle(outputGroup_);
         // use the callback functions to determine particle characteristics
         p->t = (*lifetime_func)();
         p->loc = (*location_func)(loc_);
         p->vel = (*velocity_func)(p->loc, loc_);
         p->size = glm::vec3(size_);
         p->color = (*color_func)();
-
-        particles.push_back(p);
     }
 
     particlesToEmit_ -= numNewParts;
@@ -189,6 +188,10 @@ Emitter* Emitter::setOutputGroup(const std::string &s)
 {
     outputGroup_ = s;
     return this;
+}
+std::string Emitter::getOutputGroup() const
+{
+    return outputGroup_;
 }
 
 Emitter* Emitter::setParticleLifetimeF(lifetimeF *lf)

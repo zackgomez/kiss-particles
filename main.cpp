@@ -50,7 +50,7 @@ void ptest(void)
     glm::vec3 up;
     float radius;
 
-    PGroup* bounce_group = ParticleManager::newGroup("bounce");
+    PGroup* bounce_group = ParticleManager::get()->newGroup("bounce");
     Emitter *e;
     // Left emitter
     // bounce and gravity
@@ -74,7 +74,7 @@ void ptest(void)
     radius = 2.f;
     glm::vec3 tornado_center = glm::vec3(0.f, -3.f, 0.f);
 
-    PGroup *pg_tornado = ParticleManager::newGroup("tornado");
+    PGroup *pg_tornado = ParticleManager::get()->newGroup("tornado");
     pg_tornado->addAction(new CentripetalForceF(tornado_center, up, radius));
     pg_tornado->addAction(new ConstForceF(4, up));
 
@@ -94,7 +94,7 @@ void ptest(void)
     radius = 2.f;
     tornado_center += glm::vec3(-10, 10, 0);
 
-    pg_tornado = ParticleManager::newGroup("tornado2");
+    pg_tornado = ParticleManager::get()->newGroup("tornado2");
     pg_tornado->addAction(new CentripetalForceF(tornado_center, up, radius));
 
     e = ParticleManager::get()->newEmitter();
@@ -170,7 +170,7 @@ void ptest(void)
 
     // bottom left emitter
     // looks like a firework
-    PGroup *pg_gravity = ParticleManager::newGroup("gravity");
+    PGroup *pg_gravity = ParticleManager::get()->newGroup("gravity");
     Emitter *e2 = ParticleManager::get()->newEmitter();
     e2->setParticleLocationF(new locationF(3.f))
         ->setParticleColorF(new discreteColorF(c))

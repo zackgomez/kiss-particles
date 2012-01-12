@@ -174,13 +174,15 @@ public:
     Emitter* setTimeRemaining(float);
 
     Emitter* setOutputGroup(const std::string &);
+    std::string getOutputGroup() const;
 
     bool isDone() const;
     // The update function. Spew some new particles, given that dt seconds
     // have elapsed.
-    void emit(std::vector<Particle*>&, float dt);
+    void emit(float dt);
 
     void addEmitterAction(PEmitterActionF *);
+
 
 private:
     Emitter();

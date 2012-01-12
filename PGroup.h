@@ -16,16 +16,16 @@ public:
     // blocks until update finishes
     void update();
 
+    Particle *newParticle();
+
     void addAction(PActionF*);
     
-    int numParticles(void);
+    int numParticles();
 private:
     std::vector<Particle*> particles_;
     std::list<PActionF*> actions_;
 
     float update_dt_;
-
-    friend class ParticleManager;
 };
 
 
