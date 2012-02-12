@@ -53,30 +53,17 @@ void ParticleManager::startUpdate(float dt)
 {
     update_dt_ = dt;
 
-    // Kick off each PGroup update
-    std::map<std::string, PGroup*>::iterator pit;
-    for (pit = groups_.begin(); pit != groups_.end(); pit++) 
-    {
-        pit->second->startUpdate(dt);
-    }
-}
-
-void ParticleManager::update()
-{
-    float dt = update_dt_;
-#ifdef KISS_PARTICLES_DEBUG
+    // Time the creation step
     struct timeval tv;
     gettimeofday(&tv, NULL);
-    int start_usec = tv.tv_usec;
-#endif
-
+    int creation_start = tv.tv_usec;
+    
     // First create new particles.
     std::list<Emitter*>::iterator eit;
     for (eit = emitters_.begin(); eit != emitters_.end(); )
     {
         std::string og = (*eit)->getOutputGroup();
-        //DPRINT(groups_.find(og)->second);
-        // Freak the fuck out if we can't find the requested group.
+        // Exit if we can't find the specified output group
         if (!groups_.count(og)) 
         {
             std::cout << "FATAL ERROR: unknown particle group requested: " << og << std::endl; 
@@ -93,43 +80,56 @@ void ParticleManager::update()
 			eit++;
     }
 
-#ifdef KISS_PARTICLES_DEBUG
+    // Record creation time
     gettimeofday(&tv, NULL);
-    int creation_usec = tv.tv_usec - start_usec;
-#endif
- 
-    // Update and move particles
+    int creation_usec = tv.tv_usec - creation_start;
+    // be careful of wrap
+    creation_usec = creation_usec >= 0 ? creation_usec : 1e6 + creation_usec;
+    if (recording_)
+        times_[0] += creation_usec;
+
+    // Start timing update
+    updateStart_ = tv.tv_usec;
+    // Kick off each PGroup update
+    std::map<std::string, PGroup*>::iterator pit;
+    for (pit = groups_.begin(); pit != groups_.end(); pit++) 
+    {
+        pit->second->startUpdate(dt);
+    }
+}
+
+void ParticleManager::update()
+{
+    float dt = update_dt_;
+
+    // Finish the particle update (blocks until each group is completed)
     std::map<std::string, PGroup*>::iterator pit;
     for (pit = groups_.begin(); pit != groups_.end(); pit++) 
     {
         pit->second->update();
     }
-#ifdef KISS_PARTICLES_DEBUG
+
+    // Finish timing
+    struct timeval tv;
     gettimeofday(&tv, NULL);
-    int update_usec = tv.tv_usec - start_usec - creation_usec;
-    creation_usec = creation_usec >= 0 ? creation_usec : 1e6 + creation_usec;
+    int update_usec = tv.tv_usec - updateStart_;
     update_usec = update_usec >= 0 ? update_usec : 1e6 + update_usec;
-    std::cout << "creation(us): " << creation_usec << '\n';
-    std::cout << "update(us):   " << update_usec << '\n';
 
     if (recording_)
     {
-        times_[0] += creation_usec;
         times_[1] += update_usec;
         frame_count_++;
     }
-#endif
 }
 
     
 
 void ParticleManager::render(float dt)
 {
-#ifdef KISS_PARTICLES_DEBUG
+    // Time the render
     struct timeval tv;
     gettimeofday(&tv, NULL);
     suseconds_t start_usec = tv.tv_usec;
-#endif
 
     // draw existing particles
     std::map<std::string, PGroup*>::iterator pit;
@@ -137,14 +137,13 @@ void ParticleManager::render(float dt)
     {
         pit->second->render();
     }
-#ifdef KISS_PARTICLES_DEBUG
+
+    // Finish the timing
     gettimeofday(&tv, NULL);
     suseconds_t render_usec = tv.tv_usec - start_usec;
     render_usec = render_usec >= 0 ? render_usec : 1e6 + render_usec;
-    std::cout << "render(us):   " << render_usec << '\n';
     if (recording_)
         times_[2] += render_usec;
-#endif
 }
 
 ParticleManager* ParticleManager::get()

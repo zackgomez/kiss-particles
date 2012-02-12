@@ -54,7 +54,11 @@ private:
     float update_dt_;
 
     bool recording_;
+    // The time an update started in system usec
+    int updateStart_;
+    // total frames recording
     unsigned frame_count_;
+    // Total times in each stage (in usec) (creation, update, render)
     double times_[3];
 };
 
