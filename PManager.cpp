@@ -109,8 +109,8 @@ void ParticleManager::update()
     int update_usec = tv.tv_usec - start_usec - creation_usec;
     creation_usec = creation_usec >= 0 ? creation_usec : 1e6 + creation_usec;
     update_usec = update_usec >= 0 ? update_usec : 1e6 + update_usec;
-    //std::cout << "creation(us): " << creation_usec << '\n';
-    //std::cout << "update(us):   " << update_usec << '\n';
+    std::cout << "creation(us): " << creation_usec << '\n';
+    std::cout << "update(us):   " << update_usec << '\n';
 
     if (recording_)
     {
@@ -141,7 +141,7 @@ void ParticleManager::render(float dt)
     gettimeofday(&tv, NULL);
     suseconds_t render_usec = tv.tv_usec - start_usec;
     render_usec = render_usec >= 0 ? render_usec : 1e6 + render_usec;
-    //std::cout << "render(us):   " << render_usec << '\n';
+    std::cout << "render(us):   " << render_usec << '\n';
     if (recording_)
         times_[2] += render_usec;
 #endif

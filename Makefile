@@ -15,7 +15,7 @@ PEmitter.o: PEmitter.cpp PEmitter.h Particle.h
 PManager.o: PManager.cpp PEmitter.h PGroup.h Particle.h PManager.h 
 	g++ $(CXXFLAGS) -c -o $@ $*.cpp  $(LD_FLAGS)
 
-PGroup.o: PGroup.cpp PGroup.h Particle.h PAction.h dprint.h 
+PGroup.o: PGroup.cpp PGroup.h Particle.h PAction.h
 	g++ $(CXXFLAGS) -c -o $@ $*.cpp  $(LD_FLAGS)
 
 clean:

@@ -6,6 +6,7 @@
 class PGroup 
 {
 public:
+    PGroup();
     ~PGroup();
 
     void render();
@@ -22,7 +23,9 @@ public:
     
     int numParticles();
 private:
-    std::vector<Particle*> particles_;
+    // Front and back AKA read and write
+    std::vector<Particle*> particles_[2];
+    int partInd_;
     std::list<PActionF*> actions_;
 
     float update_dt_;
