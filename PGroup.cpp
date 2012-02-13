@@ -1,5 +1,6 @@
 #include "PGroup.h"
 #include <iostream>
+#include <algorithm>
 #include "Thread.h"
 
 void PGroup::render(void) 
@@ -84,33 +85,42 @@ void PGroup::update()
     // Finally, wait for the threads by joining on them.
     
 
+    // A list of dead particles that need to be removed
+    std::vector<int> deadPartInds;
+
     // Update/integrate each particle
     for (size_t i = 0; i < particles_.size(); i++)
     {
-        // Update each particle first for all actions
-        std::list<PActionF*>::iterator pfit;
-        for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
-            (**pfit)(particles_[i], dt);
-
-        // Integrate
-        particles_[i]->update(dt);
-    }
-
-    // Remove dead particles
-    // NOTE this cannot be parallelized...
-    for (size_t i = 0; i < particles_.size(); )
-    {
         Particle *part = particles_[i];
-        if (part->t < 0)
+        if (part->t > 0)
         {
-            delete part;
-            std::swap(particles_[i], particles_.back());
-            particles_.pop_back();
+            // Update each particle first for all actions
+            std::list<PActionF*>::iterator pfit;
+            for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
+            {
+                (**pfit)(part, dt);
+            }
+
+            // Integrate
+            part->update(dt);
         }
         else
         {
-            i++;
+            // Particle is dead, add index to vector
+            deadPartInds.push_back(i);
         }
+    }
+
+    // sort in descending order
+    std::sort(deadPartInds.rbegin(), deadPartInds.rend());
+    // Remove dead particles
+    for (size_t i = 0; i < deadPartInds.size(); i++)
+    {
+        int pind = deadPartInds[i];
+        delete particles_[pind];
+        // Swap trick to quickly remove particles from a vector
+        std::swap(particles_[pind], particles_.back());
+        particles_.pop_back();
     }
 }
     
