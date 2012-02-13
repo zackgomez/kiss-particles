@@ -8,7 +8,7 @@ class Emitter;
 class PActionF
 {
 public:
-    virtual void operator() (std::vector<Particle*> &, float dt) = 0;
+    virtual void operator() (Particle*, float dt) = 0;
 };
 
 class PEmitterActionF
@@ -17,6 +17,19 @@ public:
     virtual void operator() (Emitter*, float) = 0;
 };
 
+class ConstForceF : public PActionF
+{
+public:
+    // Constructor takes the gravity constant
+    ConstForceF(float g, const glm::vec3 &dir);
+    virtual void operator() (Particle*, float dt);
+private:
+    float g_;
+    const glm::vec3 dir_;
+};
+
+
+/*
 class PERandomF : virtual public PEmitterActionF
 {
 public:
@@ -30,17 +43,6 @@ class DefaultActionF : public PActionF
 {
 public:
     virtual void operator()(std::vector<Particle*>&, float dt);
-};
-
-class ConstForceF : public PActionF
-{
-public:
-    // Constructor takes the gravity constant
-    ConstForceF(float g, const glm::vec3 &dir);
-    virtual void operator() (std::vector<Particle*> &, float dt);
-private:
-    float g_;
-    const glm::vec3 dir_;
 };
 
 // Centripetal force around a line oriented by center and up
@@ -110,4 +112,4 @@ private:
     glm::vec3 normal_;
     float elasticity_;
 };
-
+*/

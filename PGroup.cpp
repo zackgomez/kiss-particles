@@ -83,15 +83,18 @@ void PGroup::update()
     //
     // Finally, wait for the threads by joining on them.
     
-    // Update each particle first for any actions, then integrate position
-    std::list<PActionF*>::iterator pfit;
-    for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
-    {
-        (**pfit)(particles_, dt);
-    }
+
     // Update/integrate each particle
     for (size_t i = 0; i < particles_.size(); i++)
+    {
+        // Update each particle first for all actions
+        std::list<PActionF*>::iterator pfit;
+        for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
+            (**pfit)(particles_[i], dt);
+
+        // Integrate
         particles_[i]->update(dt);
+    }
 
     // Remove dead particles
     // NOTE this cannot be parallelized...
