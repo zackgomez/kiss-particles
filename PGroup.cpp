@@ -54,29 +54,15 @@ void PGroup::startUpdate(float dt)
 // Struct used for thread communication
 struct threadarg
 {
-    std::vector<Particle*> particles;
-    std::list<PActionF*> actions;
-    float dt;
+    // TODO fill this in
 };
 
 void *threadfunc(void *arg)
 {
     threadarg *targ = (threadarg *) arg;
-    std::vector<Particle*> &particles = targ->particles;
-    std::list<PActionF*> &actions = targ->actions;
-    float dt = targ->dt;
 
-    // apply any particle actions we have (gravity, other forces)
-    std::list<PActionF*>::iterator pfit;
-    for (pfit = actions.begin(); pfit != actions.end(); pfit++)
-    {
-        (**pfit)(particles, dt);
-    }
-
-    // Update/integrate each particle
-    for (size_t i = 0; i < particles.size(); i++)
-        particles[i]->update(dt);
-
+    // TODO fill the rest in
+    
     delete targ;
     return 0;
 }
@@ -97,6 +83,7 @@ void PGroup::update()
     //
     // Finally, wait for the threads by joining on them.
     
+    /*
     int num_threads = 4;
     std::vector<Thread> threads_(num_threads);
     for (int i = 0; i < num_threads; i++)
@@ -104,19 +91,19 @@ void PGroup::update()
         threadarg *arg = new threadarg();
         arg->actions = actions_;
         arg->dt = dt;
-
-        int start = i * (particles_.size() / num_threads);
-        int end   = (i+1) * (particles_.size() / num_threads);
-
-        arg->particles = std::vector<Particle*>(particles_.begin() + start,
-                particles_.begin() + end);
-
-        threads_[i].run(threadfunc, arg);
     }
+    */
 
-    for (int i = 0; i < num_threads; i++)
+    // Update/integrate each particle
+    for (size_t i = 0; i < particles_.size(); i++)
     {
-        threads_[i].join();
+        // Update each particle first for all actions
+        std::list<PActionF*>::iterator pfit;
+        for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
+            (**pfit)(particles_[i], dt);
+
+        // Integrate
+        particles_[i]->update(dt);
     }
 
     // Remove dead particles

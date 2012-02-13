@@ -4,6 +4,16 @@
 #include <cstdio>
 #include "PEmitter.h"
 
+ConstForceF::ConstForceF(float g, const glm::vec3 &dir) :
+    g_(g), dir_(glm::normalize(dir))
+{ }
+
+void ConstForceF::operator() (Particle *part, float dt)
+{
+    part->vel += dir_ * g_ * dt;
+}
+
+/*
 PERandomF::PERandomF(float howRandom) : sigma_(howRandom) { }
 
 void PERandomF::operator() (Emitter* em, float dt)
@@ -17,16 +27,6 @@ void PERandomF::operator() (Emitter* em, float dt)
 void DefaultActionF::operator()(std::vector<Particle*>&, float dt)
 {
     return;
-}
-
-ConstForceF::ConstForceF(float g, const glm::vec3 &dir) :
-    g_(g), dir_(glm::normalize(dir))
-{ }
-
-void ConstForceF::operator() (std::vector<Particle*> &parts, float dt)
-{
-    for (size_t i = 0; i < parts.size(); i++)
-        parts[i]->vel += dir_ * g_ * dt;
 }
 
 CentripetalForceF::CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up,
@@ -139,13 +139,12 @@ void PPlaneBounceF::operator() (std::vector<Particle*> &parts, float dt)
 void PPlaneBounceF::reflectParticleVelocity(Particle *p)
 {
     float magnitude = glm::length(p->vel);
-    /*
-    glm::vec3 dn = normal_ - glm::normalize(p.vel);
-    glm::vec3 oldvel = p.vel;
-    */
+    //glm::vec3 dn = normal_ - glm::normalize(p.vel);
+    //glm::vec3 oldvel = p.vel;
     // reflected vector
 
     p->vel = magnitude * glm::normalize((normal_ - glm::normalize(p->vel)));
     p->vel = elasticity_ * magnitude *  glm::reflect(-glm::normalize(p->vel), normal_);
 }
 
+*/
