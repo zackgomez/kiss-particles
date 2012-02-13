@@ -1,5 +1,6 @@
 #include "PGroup.h"
 #include <iostream>
+#include <algorithm>
 #include "Thread.h"
 
 void PGroup::render(void) 
@@ -59,6 +60,9 @@ struct threadarg
 
     std::vector<Particle*> *particles;
     int start, end;
+
+    std::vector<int> *deadPartInds;
+    Mutex *dpilock;
 };
 
 void *threadfunc(void *arg)
@@ -66,6 +70,8 @@ void *threadfunc(void *arg)
     threadarg *targ = (threadarg *) arg;
     std::vector<Particle*> &particles = *(targ->particles);
     std::list<PActionF*> &actions = *(targ->actions);
+    std::vector<int> &deadPartInds = *(targ->deadPartInds);
+    Mutex &dpilock = *(targ->dpilock);
     float dt = targ->dt;
     int start = targ->start;
     int end = targ->end;
@@ -73,13 +79,24 @@ void *threadfunc(void *arg)
     // Update/integrate each particle
     for (int i = start; i < end; i++)
     {
-        // Update each particle first for all actions
-        std::list<PActionF*>::iterator pfit;
-        for (pfit = actions.begin(); pfit != actions.end(); pfit++)
-            (**pfit)(particles[i], dt);
+        Particle *part = particles[i];
+        if (part->t > 0)
+        {
+            // Update each particle first for all actions
+            std::list<PActionF*>::iterator pfit;
+            for (pfit = actions.begin(); pfit != actions.end(); pfit++)
+                (**pfit)(part, dt);
 
-        // Integrate
-        particles[i]->update(dt);
+            // Integrate
+            part->update(dt);
+        }
+        else
+        {
+            // The particle is dead, add it to the list, be safe though
+            dpilock.lock();
+            deadPartInds.push_back(i);
+            dpilock.unlock();
+        }
     }
     
 
@@ -97,16 +114,24 @@ void PGroup::update()
     if (particles_.empty())
         return;
 
-    int num_threads = 1;
+    // index of dead particles
+    std::vector<int> deadPartInds;
+
+    int num_threads = 4;
     std::vector<Thread> threads_(num_threads);
+    Mutex dpilock;
     for (int i = 0; i < num_threads; i++)
     {
         threadarg *arg = new threadarg();
         arg->actions = &actions_;
-        arg->particles = &particles_;
         arg->dt = dt;
+
+        arg->particles = &particles_;
         arg->start = i * (particles_.size() / num_threads);
         arg->end = (i+1) * (particles_.size() / num_threads);
+
+        arg->deadPartInds = &deadPartInds;
+        arg->dpilock = &dpilock;
 
         threads_[i].run(threadfunc, arg);
     }
@@ -116,21 +141,16 @@ void PGroup::update()
         threads_[i].join();
     }
 
+    // sort in descending order
+    std::sort(deadPartInds.rbegin(), deadPartInds.rend());
     // Remove dead particles
-    // NOTE this cannot be parallelized...
-    for (size_t i = 0; i < particles_.size(); )
+    for (size_t i = 0; i < deadPartInds.size(); i++)
     {
-        Particle *part = particles_[i];
-        if (part->t < 0)
-        {
-            delete part;
-            std::swap(particles_[i], particles_.back());
-            particles_.pop_back();
-        }
-        else
-        {
-            i++;
-        }
+        int pind = deadPartInds[i];
+        delete particles_[pind];
+        // Swap trick to quickly remove particles from a vector
+        std::swap(particles_[pind], particles_.back());
+        particles_.pop_back();
     }
 }
     
