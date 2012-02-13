@@ -24,9 +24,9 @@ void setupEmitters(void)
     Emitter *e = ParticleManager::get()->newEmitter();
     e->setLocation(glm::vec3(0, 0, 0))
      ->setParticleLocationF(new locationF(0.05f))
-     ->setParticleVelocityF(new coneVelocityF(5.f, 1.f, glm::vec3(0, 1, 0), 0.85f))
-     ->setParticleLifetimeF(new lifetimeNormalF(2.0, 0.1))
-     ->setOutputRate(3000)
+     ->setParticleVelocityF(new coneVelocityF(8.f, 1.f, glm::vec3(0, 1, 0), 0.85f))
+     ->setParticleLifetimeF(new lifetimeNormalF(3.0, 0.1))
+     ->setOutputRate(5000)
      ->setOutputGroup("gravity");
     ParticleManager::get()->addEmitter(e);
     bounce_group->addAction(new ConstForceF(6, glm::vec3(0, -1, 0)));
