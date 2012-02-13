@@ -1,25 +1,24 @@
 #include "PGroup.h"
 #include <iostream>
+#include "Thread.h"
 
 void PGroup::render(void) 
 {
     // Create a buffer of just the particle data we want and render the array
     // in one go.  It may seem slower to make this extra copy, but it's
     // actually way faster due to the way gfx cards work
-    std::vector<particleData> buf(particles_[partInd_].size());
+    std::vector<particleData> buf(particles_.size());
 
-    for (size_t i = 0; i < particles_[partInd_].size(); i++)
+    for (size_t i = 0; i < particles_.size(); i++)
     {
-        buf[i].pos = particles_[partInd_][i]->loc;
-        buf[i].color = particles_[partInd_][i]->color;
+        buf[i].pos = particles_[i]->loc;
+        buf[i].color = particles_[i]->color;
     }
 
     renderParticles(buf);
 }
 
-PGroup::PGroup() :
-    // Start out reading from 0 and writing to 1
-    partInd_(0)
+PGroup::PGroup() 
 {
 }
 
@@ -33,13 +32,13 @@ Particle* PGroup::newParticle()
     // Add the particle to the "read" buffer so it gets updated on the
     // next frame
     Particle *ret = new Particle();
-    particles_[partInd_].push_back(ret);
+    particles_.push_back(ret);
     return ret;
 }
 
 int PGroup::numParticles(void)
 {
-    return particles_[partInd_].size();
+    return particles_.size();
 }
 
 void PGroup::addAction(PActionF* pa)
@@ -52,35 +51,87 @@ void PGroup::startUpdate(float dt)
     update_dt_ = dt;
 }
 
+// Struct used for thread communication
+struct threadarg
+{
+    std::vector<Particle*> particles;
+    std::list<PActionF*> actions;
+    float dt;
+};
+
+void *threadfunc(void *arg)
+{
+    threadarg *targ = (threadarg *) arg;
+    std::vector<Particle*> &particles = targ->particles;
+    std::list<PActionF*> &actions = targ->actions;
+    float dt = targ->dt;
+
+    // apply any particle actions we have (gravity, other forces)
+    std::list<PActionF*>::iterator pfit;
+    for (pfit = actions.begin(); pfit != actions.end(); pfit++)
+    {
+        (**pfit)(particles, dt);
+    }
+
+    // Update/integrate each particle
+    for (size_t i = 0; i < particles.size(); i++)
+        particles[i]->update(dt);
+
+    delete targ;
+    return 0;
+}
+
 void PGroup::update()
 {
     // Use the dt from startUpdate
     float dt = update_dt_;
 
-    // apply any particle actions we have (gravity, other forces)
-    std::list<PActionF*>::iterator pfit;
-    for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
+    // Don't do anything if there are no particles
+    if (particles_.empty())
+        return;
+
+    // TODO Create a thread that does this work.  You will probably need a 
+    // struct to pass to each thread.
+    //
+    // Then create and start some threads.
+    //
+    // Finally, wait for the threads by joining on them.
+    
+    int num_threads = 2;
+    std::vector<Thread> threads_(num_threads);
+    for (int i = 0; i < num_threads; i++)
     {
-        (**pfit)(particles_[partInd_], dt);
+        threadarg *arg = new threadarg();
+        arg->actions = actions_;
+        arg->dt = dt;
+
+        int start = i * (particles_.size() / num_threads);
+        int end   = (i+1) * (particles_.size() / num_threads);
+
+        arg->particles = std::vector<Particle*>(particles_.begin() + start,
+                particles_.begin() + end);
+
+        threads_[i].run(threadfunc, arg);
     }
 
-    // Loop over each particle removing it if necessary, and updating
-    // otherwise
-    for (size_t i = 0; i < particles_[partInd_].size(); )
+    for (int i = 0; i < num_threads; i++)
     {
-        Particle *part = particles_[partInd_][i];
+        threads_[i].join();
+    }
+
+    // Remove dead particles
+    // NOTE this cannot be parallelized...
+    for (size_t i = 0; i < particles_.size(); )
+    {
+        Particle *part = particles_[i];
         if (part->t < 0)
         {
             delete part;
-            // Use swap trick to quickly remove element
-            std::swap(particles_[partInd_][i], particles_[partInd_].back());
-            particles_[partInd_].pop_back();
-            // new particle in index, don't update i
+            std::swap(particles_[i], particles_.back());
+            particles_.pop_back();
         }
         else
         {
-            // Particle is still alive, just update and move on
-            part->update(dt);
             i++;
         }
     }
@@ -89,10 +140,7 @@ void PGroup::update()
 
 void PGroup::reset(void)
 {
-    for (partInd_ = 0; partInd_ < 2; partInd_++)
-    {
-        for (size_t i = 0; i < particles_[partInd_].size(); i++)
-            delete particles_[partInd_][i];
-        particles_[partInd_].clear();
-    }
+    for (size_t i = 0; i < particles_.size(); i++)
+        delete particles_[i];
+    particles_.clear();
 }

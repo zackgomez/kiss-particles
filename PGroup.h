@@ -23,9 +23,7 @@ public:
     
     int numParticles();
 private:
-    // Front and back AKA read and write
-    std::vector<Particle*> particles_[2];
-    int partInd_;
+    std::vector<Particle*> particles_;
     std::list<PActionF*> actions_;
 
     float update_dt_;
