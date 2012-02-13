@@ -54,15 +54,36 @@ void PGroup::startUpdate(float dt)
 // Struct used for thread communication
 struct threadarg
 {
-    // TODO fill this in
+    std::list<PActionF*>   *actions;
+    float dt;
+
+    std::vector<Particle*> *particles;
+    int start, end;
 };
 
 void *threadfunc(void *arg)
 {
     threadarg *targ = (threadarg *) arg;
+    std::vector<Particle*> &particles = *(targ->particles);
+    std::list<PActionF*> &actions = *(targ->actions);
+    float dt = targ->dt;
+    int start = targ->start;
+    int end = targ->end;
 
-    // TODO fill the rest in
+    // Update/integrate each particle
+    for (int i = start; i < end; i++)
+    {
+        // Update each particle first for all actions
+        std::list<PActionF*>::iterator pfit;
+        for (pfit = actions.begin(); pfit != actions.end(); pfit++)
+            (**pfit)(particles[i], dt);
+
+        // Integrate
+        particles[i]->update(dt);
+    }
     
+
+    // Clean up and finish
     delete targ;
     return 0;
 }
@@ -76,34 +97,23 @@ void PGroup::update()
     if (particles_.empty())
         return;
 
-    // TODO Create a thread that does this work.  You will probably need a 
-    // struct to pass to each thread.
-    //
-    // Then create and start some threads.
-    //
-    // Finally, wait for the threads by joining on them.
-    
-    /*
-    int num_threads = 4;
+    int num_threads = 1;
     std::vector<Thread> threads_(num_threads);
     for (int i = 0; i < num_threads; i++)
     {
         threadarg *arg = new threadarg();
-        arg->actions = actions_;
+        arg->actions = &actions_;
+        arg->particles = &particles_;
         arg->dt = dt;
+        arg->start = i * (particles_.size() / num_threads);
+        arg->end = (i+1) * (particles_.size() / num_threads);
+
+        threads_[i].run(threadfunc, arg);
     }
-    */
 
-    // Update/integrate each particle
-    for (size_t i = 0; i < particles_.size(); i++)
+    for (size_t i = 0; i < threads_.size(); i++)
     {
-        // Update each particle first for all actions
-        std::list<PActionF*>::iterator pfit;
-        for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
-            (**pfit)(particles_[i], dt);
-
-        // Integrate
-        particles_[i]->update(dt);
+        threads_[i].join();
     }
 
     // Remove dead particles
