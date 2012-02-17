@@ -1,4 +1,5 @@
-#include <GL/glew.h>
+#define GL_GLEXT_PROTOTYPES
+#include <GL/gl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -136,13 +137,6 @@ int main(int argc, char **argv)
     glutMotionFunc(motion);
     glutKeyboardFunc(keyboard);
     glutIdleFunc(idle);
-
-    GLenum err = glewInit();
-    if (err != GLEW_OK)
-    {
-        std::cerr << "Unable to initialize GLEW: " << glewGetErrorString(err) << '\n';
-        exit(1);
-    }
 
     setupEmitters();
 
