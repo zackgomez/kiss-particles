@@ -167,6 +167,7 @@ public:
     Emitter* setParticleLifetimeF(lifetimeF *);
     Emitter* setParticleVelocityF(velocityF *);
     Emitter* setParticleColorF(colorF *);
+    Emitter* setParticleSize(const glm::vec3 &size);
 
     Emitter* setLocation(const glm::vec3 &l);
     Emitter* setOutputRate(float r);

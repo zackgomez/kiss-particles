@@ -234,6 +234,12 @@ Emitter* Emitter::setParticleColorF(colorF *cf)
     return this;
 }
 
+Emitter* Emitter::setParticleSize(const glm::vec3 &size)
+{
+    size_ = size;
+    return this;
+}
+
 Emitter* Emitter::setLocation(const glm::vec3 &l) 
 { 
     loc_ = l; 
