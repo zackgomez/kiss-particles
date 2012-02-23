@@ -2,23 +2,9 @@
 #include <iostream>
 #include "dprint.h"
 
-void PGroup::render(void) 
+PGroup::PGroup()
 {
-    // loop over each particle and render
-    /*
-    for (size_t i = 0; i < particles_.size(); i++)
-        particles_[i]->render();
-        */
-
-    std::vector<particleData> buf(particles_.size());
-
-    for (size_t i = 0; i < particles_.size(); i++)
-    {
-        buf[i].pos = particles_[i]->loc;
-        buf[i].color = particles_[i]->color;
-    }
-
-    renderParticles(buf);
+    action_ = NULL;
 }
 
 PGroup::~PGroup()
@@ -28,10 +14,9 @@ PGroup::~PGroup()
 
 Particle* PGroup::newParticle()
 {
-    // TODO use something more intricate
-    Particle *ret = new Particle();
-    particles_.push_back(ret);
-    return ret;
+    // "allocate" a new particle
+    particles_.push_back(Particle());
+    return &particles_.back();
 }
 
 int PGroup::numParticles(void)
@@ -40,9 +25,11 @@ int PGroup::numParticles(void)
 }
 
 
-void PGroup::addAction(PActionF* pa)
+void PGroup::setAction(PActionF* pa)
 {
-    actions_.push_back(pa);
+    if (action_)
+        delete action_;
+    action_ = pa;
 }
 
 void PGroup::startUpdate(float dt)
@@ -54,19 +41,11 @@ void PGroup::update()
 {
     float dt = update_dt_;
 
-    // apply any actions we have.
-    std::list<PActionF*>::iterator pfit;
-    for (pfit = actions_.begin(); pfit != actions_.end(); pfit++)
-    {
-        (**pfit)(particles_, dt);
-    }
-
     for (size_t i = 0; i < particles_.size(); )
     {
-        Particle *part = particles_[i];
-        if (part->t < 0)
+        Particle &part = particles_[i];
+        if (part.t < 0)
         {
-            delete part;
             // Use swap trick to quickly remove element
             std::swap(particles_[i], particles_.back());
             particles_.pop_back();
@@ -74,7 +53,12 @@ void PGroup::update()
         }
         else
         {
-            part->update(dt);
+            // apply the action
+            if (action_)
+                (*action_)(&part, dt);
+            // Integrate
+            part.update(dt);
+            // Next particle
             i++;
         }
     }
@@ -83,7 +67,11 @@ void PGroup::update()
 
 void PGroup::reset(void)
 {
-    for (size_t i = 0; i < particles_.size(); i++)
-        delete particles_[i];
     particles_.clear();
 }
+
+void PGroup::render(void) 
+{
+    renderParticles(particles_);
+}
+

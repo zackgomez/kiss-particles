@@ -52,6 +52,7 @@ void ptest(void)
 
     PGroup* bounce_group = ParticleManager::get()->newGroup("bounce");
     Emitter *e;
+
     // Left emitter
     // bounce and gravity
     glm::vec3 left_loc = glm::vec3(-10.0, 0.0, 0.0);
@@ -63,10 +64,12 @@ void ptest(void)
      ->setOutputRate(550)
      ->setOutputGroup("bounce");
     ParticleManager::get()->addEmitter(e);
-    bounce_group->addAction(
+    MultiActionF* bouncema = new MultiActionF();
+    bouncema->addAction(
         new PPlaneBounceF(left_loc - glm::vec3(0,3,0), 
                           glm::vec3(0,1,0), .85)); 
-    bounce_group->addAction(new ConstForceF(40, glm::vec3(0, -1, 0)));
+    bouncema->addAction(new ConstForceF(40, glm::vec3(0, -1, 0)));
+    bounce_group->setAction(bouncema);
 
     // center emitter
     // tornado hazard
@@ -75,8 +78,10 @@ void ptest(void)
     glm::vec3 tornado_center = glm::vec3(0.f, -3.f, 0.f);
 
     PGroup *pg_tornado = ParticleManager::get()->newGroup("tornado");
-    pg_tornado->addAction(new CentripetalForceF(tornado_center, up, radius));
-    pg_tornado->addAction(new ConstForceF(4, up));
+    MultiActionF *tornadoma = new MultiActionF();
+    tornadoma->addAction(new CentripetalForceF(tornado_center, up, radius));
+    tornadoma->addAction(new ConstForceF(4, up));
+    pg_tornado->setAction(tornadoma);
 
     e = ParticleManager::get()->newEmitter();
     e->setLocation(tornado_center)
@@ -95,7 +100,7 @@ void ptest(void)
     tornado_center += glm::vec3(-10, 10, 0);
 
     pg_tornado = ParticleManager::get()->newGroup("tornado2");
-    pg_tornado->addAction(new CentripetalForceF(tornado_center, up, radius));
+    pg_tornado->setAction(new CentripetalForceF(tornado_center, up, radius));
 
     e = ParticleManager::get()->newEmitter();
     e->setLocation(tornado_center)
@@ -183,15 +188,16 @@ void ptest(void)
     //pg_gravity->addAction(new GravityActionF(55));
     glm::vec3 blackhole_loc = glm::vec3(0, -8, 0);
     glm::vec3 blackhole_loc2 = glm::vec3(-12, -20, 0);
-    pg_gravity->addAction(new PPointAttractorF(blackhole_loc, 50));
-    pg_gravity->addAction(new PPointSinkF(blackhole_loc, .8f));
-    pg_gravity->addAction(new PPlaneSinkF(blackhole_loc, glm::vec3(-1, 0, 0)));
-    pg_gravity->addAction(new PPointAttractorF(blackhole_loc2, 50));
-    pg_gravity->addAction(new PPointSinkF(blackhole_loc2, .8f));
-    pg_gravity->addAction(new PPlaneSinkF(blackhole_loc2, glm::vec3(0, 1, 0)));
+    MultiActionF *maf = new MultiActionF();
+    maf->addAction(new PPointAttractorF(blackhole_loc, 50));
+    maf->addAction(new PPointSinkF(blackhole_loc, .8f));
+    maf->addAction(new PPlaneSinkF(blackhole_loc, glm::vec3(-1, 0, 0)));
+    maf->addAction(new PPointAttractorF(blackhole_loc2, 50));
+    maf->addAction(new PPointSinkF(blackhole_loc2, .8f));
+    maf->addAction(new PPlaneSinkF(blackhole_loc2, glm::vec3(0, 1, 0)));
+    pg_gravity->setAction(maf);
     
     ParticleManager::get()->addEmitter(e2);
-
 }
 
 void timerCallback (int value);
@@ -333,21 +339,22 @@ int main(int argc, char **argv)
     return 0;             /* ANSI C requires main to return int. */
 }
 
-void renderParticles(const std::vector<particleData> &data)
+void renderParticles(const std::vector<Particle> &data)
 {
     glBindBuffer(GL_ARRAY_BUFFER, partbuf);
-    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(particleData), &data.front(), GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, data.size() * sizeof(Particle), &data.front(), GL_STREAM_DRAW);
 
     glMatrixMode(GL_MODELVIEW);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
-    glVertexPointer(3, GL_FLOAT, 7*sizeof(float), 0);
-    glColorPointer(4, GL_FLOAT, 7*sizeof(float), (void *)(3 * sizeof(float)));
+    glVertexPointer(3, GL_FLOAT, sizeof(Particle), (void *)offsetof(Particle, loc));
+    glColorPointer(4, GL_FLOAT, sizeof(Particle), (void *)offsetof(Particle, color));
     glDrawArrays(GL_POINTS, 0, data.size());
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
 }
 

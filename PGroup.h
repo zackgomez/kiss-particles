@@ -6,6 +6,7 @@
 class PGroup 
 {
 public:
+    PGroup();
     ~PGroup();
 
     void render();
@@ -18,21 +19,14 @@ public:
 
     Particle *newParticle();
 
-    void addAction(PActionF*);
+    void setAction(PActionF*);
     
     int numParticles();
 private:
-    std::vector<Particle*> particles_;
-    std::list<PActionF*> actions_;
+    std::vector<Particle> particles_;
+    PActionF* action_;
 
     float update_dt_;
 };
 
-
-struct particleData
-{
-    glm::vec3 pos;
-    glm::vec4 color;
-};
- 
-void renderParticles(const std::vector<particleData> &data);
+void renderParticles(const std::vector<Particle> &data);

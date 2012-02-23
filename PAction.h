@@ -8,28 +8,25 @@ class Emitter;
 class PActionF
 {
 public:
-    virtual void operator() (std::vector<Particle*> &, float dt) = 0;
-};
-
-class PEmitterActionF
-{
-public:
-    virtual void operator() (Emitter*, float) = 0;
-};
-
-class PERandomF : virtual public PEmitterActionF
-{
-public:
-    PERandomF(float howRandom);
-    virtual void operator() (Emitter*, float);
-private:
-    float sigma_;
+    virtual ~PActionF() { }
+    virtual void operator() (Particle*, float dt) = 0;
 };
 
 class DefaultActionF : public PActionF 
 {
 public:
-    virtual void operator()(std::vector<Particle*>&, float dt);
+    virtual void operator() (Particle*, float dt);
+};
+
+class MultiActionF : public PActionF
+{
+public:
+    virtual ~MultiActionF();
+    virtual void operator() (Particle*, float dt);
+    void addAction(PActionF*);
+
+private:
+    std::vector<PActionF*> actions_;
 };
 
 class ConstForceF : public PActionF
@@ -37,7 +34,8 @@ class ConstForceF : public PActionF
 public:
     // Constructor takes the gravity constant
     ConstForceF(float g, const glm::vec3 &dir);
-    virtual void operator() (std::vector<Particle*> &, float dt);
+    virtual void operator() (Particle*, float dt);
+
 private:
     float g_;
     const glm::vec3 dir_;
@@ -49,7 +47,7 @@ class CentripetalForceF : public PActionF
 public:
     CentripetalForceF(const glm::vec3 &center, const glm::vec3 &up,
             float radius);
-    virtual void operator() (std::vector<Particle*> &, float dt);
+    virtual void operator() (Particle*, float dt);
 
     void setCenter(const glm::vec3& center);
 
@@ -63,7 +61,7 @@ class PPointAttractorF : public PActionF
 {
 public:
     PPointAttractorF(const glm::vec3 &pos, float magnitude);
-    virtual void operator() (std::vector<Particle*> &, float);
+    virtual void operator() (Particle*, float dt);
 private:
     glm::vec3 pos_;
     float g_;
@@ -73,7 +71,7 @@ class PPointSinkF : public PActionF
 {
 public:
     PPointSinkF(const glm::vec3 &, float tolerance);
-    virtual void operator() (std::vector<Particle*> &, float);
+    virtual void operator() (Particle*, float dt);
 private:
     glm::vec3 pos_;
     float tol_;
@@ -83,7 +81,7 @@ class PPlaneSinkF : public PActionF
 {
 public:
     PPlaneSinkF(const glm::vec3 &pt, const glm::vec3 &normal);
-    virtual void operator() (std::vector<Particle*> &, float);
+    virtual void operator() (Particle*, float dt);
 
 private:
     glm::vec3 pt_, normal_;
@@ -100,7 +98,7 @@ public:
                   const glm::vec3 &normal_vec, 
                   float elasticity);
 
-    virtual void operator() (std::vector<Particle*> &, float);
+    virtual void operator() (Particle*, float dt);
 
     void reflectParticleVelocity(Particle *p);
 
@@ -111,3 +109,20 @@ private:
     float elasticity_;
 };
 
+
+// EMITTER ACTIONS
+
+class PEmitterActionF
+{
+public:
+    virtual void operator() (Emitter*, float) = 0;
+};
+
+class PERandomF : virtual public PEmitterActionF
+{
+public:
+    PERandomF(float howRandom);
+    virtual void operator() (Emitter*, float);
+private:
+    float sigma_;
+};
