@@ -21,6 +21,11 @@ ParticleManager::~ParticleManager()
 
 PGroup* ParticleManager::newGroup(const std::string &gname)
 {
+    if (groups_.find(gname) != groups_.end())
+    {
+        // XXX We may be returning an existing particle group!
+        return groups_[gname];
+    }
     PGroup *p = new PGroup();
     get()->groups_[gname] = p;
     return p;
