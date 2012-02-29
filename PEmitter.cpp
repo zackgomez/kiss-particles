@@ -60,6 +60,12 @@ glm::vec3 locationF::operator() (const glm::vec3 &epos)
     return pointOnSphere(r_, epos);
 }
 
+glm::vec3 sphereInteriorLocationF::operator() (const glm::vec3 &epos)
+{
+    float r = randomFloat() * r_;
+    return pointOnSphere(r, epos);
+}
+
 circleInteriorLocationF::circleInteriorLocationF(float radius, const glm::vec3 &up) :
         circleLocationF(radius, up), r_(radius), upvec_(glm::normalize(up)) 
     { }

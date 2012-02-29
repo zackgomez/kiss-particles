@@ -92,6 +92,7 @@ struct locationF
 {
     locationF() : r_(0.f) { }
     locationF(float radius) : r_(radius) { }
+    virtual ~locationF() { }
 
     virtual glm::vec3 operator()(const glm::vec3 &epos);
 protected:
@@ -111,6 +112,15 @@ protected:
     // Repeated because eventually locationF will be just an interface
     float r_;
     glm::vec3 upvec_;
+};
+
+struct sphereInteriorLocationF : public locationF
+{
+    sphereInteriorLocationF(float radius) : r_(radius) { }
+
+    virtual glm::vec3 operator()(const glm::vec3 &epos);
+protected:
+    float r_;
 };
 
 // Creates particles on the interior a circle, with radius and orientation

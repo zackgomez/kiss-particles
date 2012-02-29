@@ -4,6 +4,7 @@
 #include "PEmitter.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <cstdlib>
+#include <algorithm>
 #ifdef KISS_PARTICLES_DEBUG
 #include <sys/time.h>
 #endif
@@ -172,8 +173,13 @@ void ParticleManager::addEmitter(Emitter *em)
 void ParticleManager::quashEmitter(Emitter *e)
 {
     assert(e);
-    delete e;
-    emitters_.remove(e);
+    if (std::find(emitters_.begin(), emitters_.end(), e) != emitters_.end())
+    {
+        delete e;
+        emitters_.remove(e);
+    }
+    else
+        std::cerr << "WARNING: unable to find emitter in quashEmitter.\n";
 }
 
 void ParticleManager::reset()
