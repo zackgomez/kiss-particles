@@ -34,7 +34,7 @@ private:
 struct velocityF
 {
     velocityF() : mu_(0), sigma_(0), vel_(0) { }
-    velocityF(float vel, float mu, float sigma) : mu_(mu), sigma_(sigma), vel_(vel) { }
+    velocityF(float speed, float mu, float sigma) : mu_(mu), sigma_(sigma), vel_(speed) { }
     virtual glm::vec3 operator() (const glm::vec3 &epos, const glm::vec3 &ppos);
 
 protected:
@@ -55,6 +55,17 @@ struct velocityCombinerF : public velocityF
 protected:
     velocityF *f1_, *f2_;
     const float a_;
+};
+
+struct velocityAdderF : public velocityF
+{
+    velocityAdderF(const glm::vec2 *vel, velocityF *f);
+    ~velocityAdderF();
+    virtual glm::vec3 operator() (const glm::vec3 &epos, const glm::vec3 &ppos);
+
+protected:
+    const glm::vec2 *vel_;
+    velocityF *f_;
 };
 
 // Assumes that locations are on a circle around epos. Gives them a velocity

@@ -18,7 +18,7 @@ float lifetimeNormalF::operator () ()
 
 glm::vec3 velocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
 {
-    return normalRandom(mu_, 0) * glm::normalize(epos - ppos) / vel_;
+    return normalRandom(mu_, sigma_) * glm::normalize(epos - ppos) / vel_;
 }
 
 velocityCombinerF::~velocityCombinerF()
@@ -30,6 +30,21 @@ velocityCombinerF::~velocityCombinerF()
 glm::vec3 velocityCombinerF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
 {
     return a_ * (*f1_)(epos, ppos) + (1 - a_) * (*f2_)(epos, ppos);
+}
+
+velocityAdderF::velocityAdderF(const glm::vec2 *vel, velocityF *f) :
+    vel_(vel), f_(f)
+{
+}
+
+velocityAdderF::~velocityAdderF()
+{
+    delete f_;
+}
+
+glm::vec3 velocityAdderF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)
+{
+    return glm::vec3(*vel_, 0.f) + (*f_)(epos, ppos);
 }
 
 glm::vec3 coneVelocityF::operator() (const glm::vec3 &epos, const glm::vec3 &ppos)

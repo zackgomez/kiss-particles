@@ -14,6 +14,17 @@ void PERandomF::operator() (Emitter* em, float dt)
     em->loc_ += dir * dt * sigma_; 
 
 }
+
+PEFollowF::PEFollowF(const glm::vec2 *pos, const glm::vec2 &offset, float z) :
+    pos_(pos), offset_(offset), z_(z)
+{
+}
+
+void PEFollowF::operator() (Emitter* e, float dt)
+{
+    e->setLocation(glm::vec3(*pos_ + offset_, z_));
+}
+
 void DefaultActionF::operator() (Particle *part, float dt)
 {
     return;
