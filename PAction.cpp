@@ -15,7 +15,7 @@ void PERandomF::operator() (Emitter* em, float dt)
 
 }
 
-PEFollowF::PEFollowF(const glm::vec2 *pos, const glm::vec2 &offset, float z) :
+PEFollowF::PEFollowF(glm::vec2 *pos, const glm::vec2 &offset, float z) :
     pos_(pos), offset_(offset), z_(z)
 {
 }

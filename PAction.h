@@ -121,7 +121,7 @@ public:
 class PEFollowF : public PEmitterActionF
 {
 public:
-    PEFollowF(const glm::vec2 *pos, const glm::vec2 &offset, float z = 0.f);
+    PEFollowF(glm::vec2 *pos, const glm::vec2 &offset, float z = 0.f);
     virtual void operator() (Emitter*, float);
 
 private:
